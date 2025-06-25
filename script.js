@@ -287,7 +287,7 @@ function showUserInfo() {
         `;
         
         document.getElementById('successMessage').innerHTML = message;
-        document.getElementById('successModal').style.display = 'block';
+        document.getElementById('successModal').style.display = 'flex';
         dropdownMenu.classList.remove('show');
     }
 }
@@ -745,8 +745,6 @@ async function loadImagesFromFolder(folder) {
         const files = await response.json();
         const imageFiles = files
             .filter(file => 
-                file.type === 'file' && 
-                /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name) &&
                 file.name !== '.gitkeep'
             )
             .map(file => ({
@@ -760,8 +758,7 @@ async function loadImagesFromFolder(folder) {
         return [];
     }
 }
-
-function displayGallery(files) {
+async function displayGallery(files) {
     gallery.innerHTML = '';
     
     if (files.length === 0) {
@@ -774,12 +771,15 @@ function displayGallery(files) {
         galleryItem.className = 'gallery-item';
         
         const downloadUrl = file.download_url;
+        const blob = await heic2any({ blob: downloadUrl, toType: "image/jpeg" });
+        const url = URL.createObjectURL(blob);
+
         const filename = file.name;
         const size = formatFileSize(file.size);
         const folder = file.folder || 'images';
         
         galleryItem.innerHTML = `
-            <img src="${downloadUrl}" alt="${filename}" loading="lazy">
+            <img src="${url}" alt="${filename}" loading="lazy">
             <div class="gallery-item-info">
                 <h4>${filename}</h4>
                 <small>${size}</small>
@@ -797,7 +797,7 @@ function displayGallery(files) {
         
         gallery.appendChild(galleryItem);
     });
-}
+);}
 
 async function downloadImage(url, filename) {
     try {

@@ -1048,3 +1048,9 @@ section.upload-section {
     width: 100%;
     max-width: 99svw;
 }
+
+div#successModal {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
