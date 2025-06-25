@@ -708,7 +708,7 @@ async function loadGallery() {
         
         if (currentFolderFilter === 'all') {
             // Load images from all folders
-            const folders = ['images', ...availableFolders];
+            const folders = [...availableFolders];
             const folderPromises = folders.map(folder => loadImagesFromFolder(folder));
             const folderResults = await Promise.allSettled(folderPromises);
             
@@ -758,46 +758,71 @@ async function loadImagesFromFolder(folder) {
         return [];
     }
 }
-async function displayGallery(files) {
-    gallery.innerHTML = '';
+
+async function convertHeicFromUrl(url) {
+    try{
+        if(url.indexOf('.HEIC') == -1){
+            return url;
+        }
+        const response = await fetch(url);
+        const heicBlob = await response.blob();
     
-    if (files.length === 0) {
-        gallery.innerHTML = '<p>Chưa có hình ảnh nào</p>';
-        return;
+        const jpegBlob = await heic2any({
+          blob: heicBlob,
+          toType: "image/jpeg"
+        });
+    
+        const imageUrl = URL.createObjectURL(jpegBlob);
+        return imageUrl
+    }catch (e){
+        console.log(e);
+        return url;
     }
     
-    files.forEach(file => {
-        const galleryItem = document.createElement('div');
-        galleryItem.className = 'gallery-item';
-        
-        const downloadUrl = file.download_url;
-        const blob = await heic2any({ blob: downloadUrl, toType: "image/jpeg" });
-        const url = URL.createObjectURL(blob);
+  }
 
-        const filename = file.name;
-        const size = formatFileSize(file.size);
-        const folder = file.folder || 'images';
+// async function displayGallery(files) {
+//     gallery.innerHTML = '';
+    
+//     if (files.length === 0) {
+//         gallery.innerHTML = '<p>Chưa có hình ảnh nào</p>';
+//         return;
+//     }
+//     debugger;
+//     files.forEach(file => {
+//         const galleryItem = document.createElement('div');
+//         galleryItem.className = 'gallery-item';
+//         debugger;
+//         const downloadUrl = file.download_url;
+//         function onDone(url){
+//             const filename = file.name;
+//             const size = formatFileSize(file.size);
+//             const folder = file.folder || 'images';
+            
+//             galleryItem.innerHTML = `
+//                 <img src="${url}" alt="${filename}" loading="lazy">
+//                 <div class="gallery-item-info">
+//                     <h4>${filename}</h4>
+//                     <small>${size}</small>
+//                     <div class="gallery-item-folder">📁 ${folder}/</div>
+//                     <div class="gallery-item-actions">
+//                         <button class="btn btn-sm btn-primary" onclick="downloadImage('${downloadUrl}', '${filename}')">
+//                             <i class="fas fa-download"></i> Tải về
+//                         </button>
+//                         <button class="btn btn-sm btn-danger" onclick="deleteImage('${file.path}', '${file.sha}')">
+//                             <i class="fas fa-trash"></i> Xóa
+//                         </button>
+//                     </div>
+//                 </div>
+//             `;
+            
+//             gallery.appendChild(galleryItem);
+//         }
+//         convertHeicFromUrl(downloadUrl, onDone);
+
         
-        galleryItem.innerHTML = `
-            <img src="${url}" alt="${filename}" loading="lazy">
-            <div class="gallery-item-info">
-                <h4>${filename}</h4>
-                <small>${size}</small>
-                <div class="gallery-item-folder">📁 ${folder}/</div>
-                <div class="gallery-item-actions">
-                    <button class="btn btn-sm btn-primary" onclick="downloadImage('${downloadUrl}', '${filename}')">
-                        <i class="fas fa-download"></i> Tải về
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteImage('${file.path}', '${file.sha}')">
-                        <i class="fas fa-trash"></i> Xóa
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        gallery.appendChild(galleryItem);
-    });
-);}
+//     })
+// }
 
 async function downloadImage(url, filename) {
     try {

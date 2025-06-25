@@ -136,8 +136,8 @@ class ImagePreviewModal {
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (!this.modal.classList.contains('show')) return;
-            
-            switch(e.key) {
+
+            switch (e.key) {
                 case 'Escape':
                     this.close();
                     break;
@@ -155,13 +155,13 @@ class ImagePreviewModal {
         });
     }
 
-    show(imageData, allImages = []) {
+    async show(imageData, allImages = []) {
         this.currentImage = imageData;
         this.allImages = allImages;
         this.currentIndex = allImages.findIndex(img => img.path === imageData.path);
-
+        const imageurl = imageData.path;
         // Update modal content
-        document.getElementById('previewImage').src = imageData.download_url;
+        document.getElementById('previewImage').src = imageurl;
         document.getElementById('previewImageName').textContent = imageData.name;
         document.getElementById('previewImageFolder').textContent = `📁 ${imageData.folder || 'images'}/`;
 
@@ -186,7 +186,7 @@ class ImagePreviewModal {
     updateFavoriteButton() {
         const btn = document.getElementById('previewFavoriteBtn');
         const isFavorite = this.favoritesManager.isFavorite(this.currentImage.path);
-        
+
         if (isFavorite) {
             btn.classList.add('btn-danger');
             btn.classList.remove('btn-outline');
@@ -210,7 +210,7 @@ class ImagePreviewModal {
         if (!this.currentImage) return;
 
         const isFavorite = this.favoritesManager.isFavorite(this.currentImage.path);
-        
+
         if (isFavorite) {
             this.favoritesManager.removeFromFavorites(this.currentImage.path);
             showSuccess('Đã xóa khỏi yêu thích');
@@ -225,7 +225,7 @@ class ImagePreviewModal {
         }
 
         this.updateFavoriteButton();
-        
+
         // Update gallery if on favorites page
         if (currentPage === 'favorites') {
             loadFavoritesGallery();
@@ -285,7 +285,7 @@ function displayFavoritesGallery(favorites) {
     favorites.forEach(favorite => {
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
-        
+
         galleryItem.innerHTML = `
             <img src="${favorite.url}" alt="${favorite.name}" loading="lazy">
             <div class="gallery-item-info">
@@ -301,7 +301,7 @@ function displayFavoritesGallery(favorites) {
                 </div>
             </div>
         `;
-        
+
         gallery.appendChild(galleryItem);
     });
 }
@@ -312,7 +312,7 @@ function previewImage(imageData) {
     if (typeof imageData === 'string') {
         imageData = JSON.parse(imageData);
     }
-    
+
     // Get all images for navigation
     let allImages = [];
     if (currentPage === 'gallery') {
@@ -333,13 +333,13 @@ function previewImage(imageData) {
         // Get favorites for navigation
         allImages = favoritesManager.getFavorites();
     }
-    
+
     imagePreviewModal.show(imageData, allImages);
 }
 
 function toggleFavorite(imagePath, imageUrl, imageName, folder) {
     const isFavorite = favoritesManager.isFavorite(imagePath);
-    
+
     if (isFavorite) {
         favoritesManager.removeFromFavorites(imagePath);
         showSuccess('Đã xóa khỏi yêu thích');
@@ -347,7 +347,7 @@ function toggleFavorite(imagePath, imageUrl, imageName, folder) {
         favoritesManager.addToFavorites(imagePath, imageUrl, imageName, folder);
         showSuccess('Đã thêm vào yêu thích');
     }
-    
+
     // Update favorite button in gallery
     updateFavoriteButtonInGallery(imagePath);
 }
@@ -387,52 +387,47 @@ function clearAllFavorites() {
 // Update displayGallery function to include favorite buttons
 function updateDisplayGalleryFunction() {
     // Override the displayGallery function in script.js
-    window.displayGallery = function(files) {
+    window.displayGallery = async function (files) {
         const gallery = document.getElementById('gallery');
         gallery.innerHTML = '';
-        
+
         if (files.length === 0) {
             gallery.innerHTML = '<p>Chưa có hình ảnh nào</p>';
             return;
         }
-        
-        files.forEach(file => {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
             const galleryItem = document.createElement('div');
             galleryItem.className = 'gallery-item';
-            galleryItem.setAttribute('data-image-path', file.path);
-            
             const downloadUrl = file.download_url;
+            const url = await convertHeicFromUrl(downloadUrl);
             const filename = file.name;
             const size = formatFileSize(file.size);
             const folder = file.folder || 'images';
-            const isFavorite = favoritesManager.isFavorite(file.path);
-            
             galleryItem.innerHTML = `
-                <img src="${downloadUrl}" alt="${filename}" loading="lazy" onclick="previewImage(${JSON.stringify(file).replace(/"/g, '&quot;')})">
-                <div class="gallery-item-info">
-                    <h4>${filename}</h4>
-                    <small>${size}</small>
-                    <div class="gallery-item-folder">📁 ${folder}/</div>
-                    <div class="gallery-item-actions">
-                        <button class="btn btn-sm btn-outline favorite-btn ${isFavorite ? 'btn-danger' : ''}" onclick="toggleFavorite('${file.path}', '${downloadUrl}', '${filename}', '${folder}')">
-                            <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
-                        </button>
-                        <button class="btn btn-sm btn-success" onclick="downloadImage('${downloadUrl}', '${filename}')">
-                            <i class="fas fa-download"></i> Tải về
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteImage('${file.path}', '${file.sha}')">
-                            <i class="fas fa-trash"></i> Xóa
-                        </button>
+                    <img src="${url}" alt="${filename}" loading="lazy">
+                    <div class="gallery-item-info">
+                        <h4>${filename}</h4>
+                        <small>${size}</small>
+                        <div class="gallery-item-folder">📁 ${folder}/</div>
+                        <div class="gallery-item-actions">
+                            <button class="btn btn-sm btn-primary" onclick="downloadImage('${downloadUrl}', '${filename}')">
+                                <i class="fas fa-download"></i> Tải về
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteImage('${file.path}', '${file.sha}')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `;
-            
+                `;
+
             gallery.appendChild(galleryItem);
-        });
+
+        }
     };
 }
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateDisplayGalleryFunction();
 }); 
