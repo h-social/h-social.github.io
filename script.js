@@ -537,11 +537,16 @@ function formatFileSize(bytes) {
 
 // Upload tuần tự từng file, lưu trạng thái
 async function uploadFiles(filesToUpload = null) {
+    debugger;
     if (!githubToken) {
         showError('Vui lòng nhập GitHub Personal Access Token');
         return;
     }
     if (!filesToUpload) filesToUpload = selectedFiles;
+    if ((filesToUpload.length||0) === 0){
+        filesToUpload = selectedFiles;
+    }
+
     if (filesToUpload.length === 0) {
         showError('Vui lòng chọn ít nhất một hình ảnh');
         return;
