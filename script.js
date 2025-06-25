@@ -534,7 +534,34 @@ function formatFileSize(bytes) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
+async function createFolder(folderName) {
+    try {
+        // Tạo file .gitkeep để tạo thư mục trên GitHub
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repository}/contents/${folderName}/.gitkeep`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${githubToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: `Create folder: ${folderName}`,
+                content: btoa(''), // Empty file
+                branch: 'main'
+            })
+        });
 
+        if (!response.ok) {
+            const error = await response.json();
+            // Nếu thư mục đã tồn tại thì bỏ qua lỗi
+            if (error.message && !error.message.includes('already exists')) {
+                throw new Error(error.message);
+            }
+        }
+    } catch (error) {
+        console.error('Error creating folder:', error);
+        // Tiếp tục, có thể thư mục đã tồn tại
+    }
+}
 // Upload tuần tự từng file, lưu trạng thái
 async function uploadFiles(filesToUpload = null) {
     debugger;
