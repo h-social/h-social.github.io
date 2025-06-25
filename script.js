@@ -299,6 +299,7 @@ async function ensureRepositoryExists() {
         const response = await fetch(`https://api.github.com/repos/${owner}/${repository}`, {
             headers: {
                 'Authorization': `token ${githubToken}`,
+                'Cache-Control': 'no-cache'
             }
         });
         
@@ -378,6 +379,7 @@ async function loadFolders() {
         const response = await fetch(`https://api.github.com/repos/${owner}/${repository}/contents`, {
             headers: {
                 'Authorization': `token ${githubToken}`,
+                'Cache-Control': 'no-cache'
             }
         });
         
@@ -735,6 +737,8 @@ async function loadImagesFromFolder(folder) {
         const response = await fetch(`https://api.github.com/repos/${owner}/${repository}/contents/${folder}`, {
             headers: {
                 'Authorization': `token ${githubToken}`,
+                'Cache-Control': 'no-cache'
+
             }
         });
         
