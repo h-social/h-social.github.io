@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - H-Social Image Manager</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .feature-card {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #4299e1;
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .feature-card h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-card i {
+            color: #4299e1;
+            font-size: 1.5rem;
+        }
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-card li {
+            padding: 8px 0;
+            color: #4a5568;
+            position: relative;
+            padding-left: 25px;
+        }
+        .feature-card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+        }
+        .demo-section {
+            background: #edf2f7;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+        .demo-section h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        .demo-steps {
+            counter-reset: step-counter;
+        }
+        .demo-step {
+            counter-increment: step-counter;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .demo-step:last-child {
+            border-bottom: none;
+        }
+        .demo-step:before {
+            content: counter(step-counter);
+            background: #4299e1;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        .highlight {
+            background: #fef5e7;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ed8936;
+            margin: 20px 0;
+        }
+        .highlight strong {
+            color: #c05621;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #4299e1;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+        .cta-button:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+        }
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .tech-tag {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-images"></i> H-Social Image Manager</h1>
+        
+        <div class="highlight">
+            <strong>🚀 Tính năng mới:</strong> Ứng dụng giờ đây có thể tự động phát hiện username từ GitHub token và sử dụng repository GitHub Pages tương ứng. Hỗ trợ hoàn toàn nhiều tài khoản GitHub!
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3><i class="fas fa-magic"></i> Xác thực thông minh</h3>
+                <ul>
+                    <li>Tự động phát hiện username từ token</li>
+                    <li>Hỗ trợ nhiều tài khoản GitHub</li>
+                    <li>Tự động cấu hình repository</li>
+                    <li>Hiển thị thông tin tài khoản chi tiết</li>
+                    <li>Avatar và dropdown menu người dùng</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><i class="fas fa-folder-tree"></i> Quản lý thư mục</h3>
+                <ul>
+                    <li>Upload vào thư mục mặc định</li>
+                    <li>Chọn từ thư mục có sẵn</li>
+                    <li>Tạo thư mục mới tự động</li>
+                    <li>Lọc hình ảnh theo thư mục</li>
+                    <li>Hiển thị đường dẫn thư mục</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><i class="fas fa-cloud-upload-alt"></i> Upload & Quản lý</h3>
+                <ul>
+                    <li>Upload nhiều file cùng lúc</li>
+                    <li>Kéo thả file trực tiếp</li>
+                    <li>Xem thư viện với preview</li>
+                    <li>Tải về từng file hoặc tất cả</li>
+                    <li>Xóa file không cần thiết</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><i class="fas fa-mobile-alt"></i> Giao diện hiện đại</h3>
+                <ul>
+                    <li>Multi-page SPA design</li>
+                    <li>Responsive trên mọi thiết bị</li>
+                    <li>Navigation thông minh</li>
+                    <li>Loading states và animations</li>
+                    <li>Giao diện trực quan</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3><i class="fas fa-play-circle"></i> Cách sử dụng</h3>
+            <div class="demo-steps">
+                <div class="demo-step">
+                    <strong>Tạo GitHub Token:</strong> Truy cập GitHub Settings > Tokens, tạo token với quyền `repo` và `user`
+                </div>
+                <div class="demo-step">
+                    <strong>Đăng nhập:</strong> Nhập token vào ứng dụng, hệ thống sẽ tự động kiểm tra và lấy thông tin tài khoản
+                </div>
+                <div class="demo-step">
+                    <strong>Upload hình ảnh:</strong> Chọn thư mục, kéo thả file và upload lên repository GitHub Pages của bạn
+                </div>
+                <div class="demo-step">
+                    <strong>Quản lý:</strong> Xem thư viện, lọc theo thư mục, tải về hoặc xóa hình ảnh
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight">
+            <strong>💡 Lưu ý:</strong> Ứng dụng sẽ tự động sử dụng repository <code>username.github.io</code> của tài khoản tương ứng với token. Bạn có thể đăng xuất và đăng nhập với tài khoản khác bất cứ lúc nào!
+        </div>
+
+        <div style="text-align: center;">
+            <a href="index.html" class="cta-button">
+                <i class="fas fa-rocket"></i> Bắt đầu sử dụng ngay
+            </a>
+        </div>
+
+        <div class="tech-stack">
+            <span class="tech-tag">HTML5</span>
+            <span class="tech-tag">CSS3</span>
+            <span class="tech-tag">JavaScript ES6+</span>
+            <span class="tech-tag">GitHub API</span>
+            <span class="tech-tag">Font Awesome</span>
+            <span class="tech-tag">LocalStorage</span>
+            <span class="tech-tag">Responsive Design</span>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; color: #718096;">
+            <p><strong>H-Social Image Manager</strong> - Quản lý hình ảnh thông minh với GitHub! 🚀</p>
+            <p>Không cần backend, hoạt động hoàn toàn trên frontend</p>
+        </div>
+    </div>
+</body>
+</html> 

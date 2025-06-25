@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H-Social Image Manager</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Avatar -->
+        <header class="main-header">
+            <div class="header-content">
+                <h1><i class="fas fa-images"></i> H-Social Image Manager</h1>
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <div class="avatar" id="avatarBtn">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item" onclick="navigateToUpload()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            Upload hình ảnh
+                        </div>
+                        <div class="dropdown-item" onclick="navigateToFavorites()">
+                            <i class="fas fa-heart"></i>
+                            Ảnh yêu thích
+                        </div>
+                        <div class="dropdown-item" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Đăng xuất
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main id="mainContent">
+            <!-- Page 1: GitHub Configuration -->
+            <div id="configPage" class="page">
+                <div class="welcome-section">
+                    <h2>Chào mừng đến với H-Social Image Manager</h2>
+                    <p>Ứng dụng quản lý hình ảnh thông minh với GitHub</p>
+                    <div class="welcome-features">
+                        <div class="feature-item">
+                            <i class="fas fa-magic"></i>
+                            <span>Tự động phát hiện username từ token</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-repository"></i>
+                            <span>Tự động sử dụng repository GitHub Pages</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-users"></i>
+                            <span>Hỗ trợ nhiều tài khoản GitHub</span>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="token-section">
+                    <h2><i class="fas fa-key"></i> Cấu hình GitHub</h2>
+                    <div class="token-input">
+                        <input type="password" id="githubToken" placeholder="Nhập GitHub Personal Access Token">
+                        <button id="saveToken" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Đăng Nhập
+                        </button>
+                    </div>
+                    <small>
+                        <a href="https://github.com/settings/tokens" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Tạo token tại đây
+                        </a>
+                    </small>
+                </section>
+            </div>
+
+            <!-- Page 2: Gallery -->
+            <div id="galleryPage" class="page" style="display: none;">
+                <section class="gallery-section">
+                    <h2><i class="fas fa-images"></i> Thư Viện Hình Ảnh</h2>
+                    
+                    <!-- Gallery Filter -->
+                    <div class="gallery-filter">
+                        <div class="filter-controls">
+                            <label for="galleryFolderFilter">Lọc theo thư mục:</label>
+                            <select id="galleryFolderFilter" class="folder-select">
+                                <option value="all">Tất cả thư mục</option>
+                            </select>
+                        </div>
+                        <div class="gallery-controls">
+                            <button id="refreshGallery" class="btn btn-secondary">
+                                <i class="fas fa-sync-alt"></i> Làm Mới
+                            </button>
+                            <button id="downloadAll" class="btn btn-success">
+                                <i class="fas fa-download"></i> Tải Tất Cả
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery" id="gallery"></div>
+                </section>
+            </div>
+
+            <!-- Page: Favorites -->
+            <div id="favoritesPage" class="page" style="display: none;">
+                <section class="gallery-section">
+                    <h2><i class="fas fa-heart"></i> Ảnh Yêu Thích</h2>
+                    <div class="gallery" id="favoritesGallery"></div>
+                    <div style="margin-top:20px; text-align:center;">
+                        <button class="btn btn-danger" onclick="clearAllFavorites()">
+                            <i class="fas fa-trash"></i> Xóa tất cả yêu thích
+                        </button>
+                        <button class="btn btn-secondary" onclick="navigateToGallery()">
+                            <i class="fas fa-images"></i> Về thư viện
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Page 3: Upload -->
+            <div id="uploadPage" class="page" style="display: none;">
+                <section class="upload-section">
+                    <h2><i class="fas fa-cloud-upload-alt"></i> Upload Hình Ảnh</h2>
+                    
+                    <!-- Folder Selection -->
+                    <div class="folder-selection">
+                        <h3><i class="fas fa-folder"></i> Chọn thư mục</h3>
+                        <div class="folder-input-group">
+                            <div class="folder-option">
+                                <input type="radio" id="defaultFolder" name="folderOption" value="default" checked>
+                                <label for="defaultFolder">Thư mục mặc định (images/)</label>
+                            </div>
+                            <div class="folder-option">
+                                <input type="radio" id="existingFolder" name="folderOption" value="existing">
+                                <label for="existingFolder">Chọn từ thư mục có sẵn</label>
+                            </div>
+                            <div class="folder-option">
+                                <input type="radio" id="newFolder" name="folderOption" value="new">
+                                <label for="newFolder">Tạo thư mục mới</label>
+                            </div>
+                        </div>
+                        
+                        <div class="folder-controls">
+                            <select id="existingFolderSelect" class="folder-select" disabled>
+                                <option value="">Đang tải danh sách thư mục...</option>
+                            </select>
+                            <input type="text" id="newFolderInput" class="folder-input" placeholder="Nhập tên thư mục mới" disabled>
+                            <button id="refreshFolders" class="btn btn-secondary">
+                                <i class="fas fa-sync-alt"></i> Làm mới danh sách
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Kéo thả hình ảnh vào đây hoặc click để chọn</p>
+                            <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                            <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-folder-open"></i> Chọn Hình Ảnh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="file-list" id="fileList"></div>
+                    
+                    <div class="upload-actions">
+                        <button id="uploadBtn" class="btn btn-primary" disabled>
+                            <i class="fas fa-upload"></i> Upload Lên GitHub
+                        </button>
+                        <button class="btn btn-secondary" onclick="navigateToGallery()">
+                            <i class="fas fa-images"></i> Xem Thư Viện
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Loading Modal -->
+        <div id="loadingModal" class="modal">
+            <div class="modal-content">
+                <div class="spinner"></div>
+                <p id="loadingText">Đang xử lý...</p>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="successModal" class="modal">
+            <div class="modal-content">
+                <i class="fas fa-check-circle success-icon"></i>
+                <h3>Thành công!</h3>
+                <p id="successMessage"></p>
+                <button class="btn btn-primary" onclick="closeModal('successModal')">Đóng</button>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div id="errorModal" class="modal">
+            <div class="modal-content">
+                <i class="fas fa-exclamation-circle error-icon"></i>
+                <h3>Lỗi!</h3>
+                <p id="errorMessage"></p>
+                <button class="btn btn-danger" onclick="closeModal('errorModal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal (full screen) -->
+    <!-- Modal sẽ được tạo động bởi favorites.js -->
+
+    <script src="script.js"></script>
+    <script src="favorites.js"></script>
+</body>
+</html> 
