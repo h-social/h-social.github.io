@@ -417,9 +417,6 @@ function updateDisplayGalleryFunction() {
                         <button class="btn btn-sm btn-outline favorite-btn ${isFavorite ? 'btn-danger' : ''}" onclick="toggleFavorite('${file.path}', '${downloadUrl}', '${filename}', '${folder}')">
                             <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
                         </button>
-                        <button class="btn btn-sm btn-primary" onclick="previewImage(${JSON.stringify(file).replace(/"/g, '&quot;')})">
-                            <i class="fas fa-eye"></i> Xem
-                        </button>
                         <button class="btn btn-sm btn-success" onclick="downloadImage('${downloadUrl}', '${filename}')">
                             <i class="fas fa-download"></i> Tải về
                         </button>

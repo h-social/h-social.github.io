@@ -39,8 +39,9 @@ const refreshFoldersBtn = document.getElementById('refreshFolders');
 const galleryFolderFilter = document.getElementById('galleryFolderFilter');
 
 // Initialize app
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     initializeApp();
+    await loadFolders();
     setupEventListeners();
     checkAuthAndNavigate();
 });
@@ -117,13 +118,13 @@ function showConfigPage() {
     userMenu.style.display = 'none';
 }
 
-function showGalleryPage() {
+async function showGalleryPage() {
     currentPage = 'gallery';
     configPage.style.display = 'none';
     galleryPage.style.display = 'block';
     uploadPage.style.display = 'none';
     userMenu.style.display = 'block';
-    loadFolders();
+    await loadFolders();
     loadGallery();
 }
 
@@ -562,6 +563,52 @@ async function createFolder(folderName) {
         // Tiếp tục, có thể thư mục đã tồn tại
     }
 }
+async function uploadSingleFile(file, folder) {
+    try {
+        // Convert file to base64
+        const base64Content = await fileToBase64(file);
+
+        // Create filename with timestamp
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filename = `${folder}/${timestamp}-${file.name}`;
+
+        // GitHub API request
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repository}/contents/${filename}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${githubToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: `Add image: ${file.name} to ${folder}`,
+                content: base64Content,
+                branch: 'main'
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Upload failed');
+        }
+
+        return { success: true, filename };
+    } catch (error) {
+        console.error('Upload error:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const base64 = reader.result.split(',')[1];
+            resolve(base64);
+        };
+        reader.onerror = error => reject(error);
+    });
+}
 // Upload tuần tự từng file, lưu trạng thái
 async function uploadFiles(filesToUpload = null) {
     debugger;
@@ -612,11 +659,11 @@ async function uploadFiles(filesToUpload = null) {
             updateFileList();
             updateUploadButton();
             loadFolders();
-            setTimeout(() => {
-                if (confirm('Bạn có muốn xem hình ảnh vừa upload không?')) {
-                    navigateToGallery();
-                }
-            }, 1000);
+            // setTimeout(() => {
+            //     if (confirm('Bạn có muốn xem hình ảnh vừa upload không?')) {
+            //         navigateToGallery();
+            //     }
+            // }, 1000);
         } else {
             showFailedUploadsUI();
         }
