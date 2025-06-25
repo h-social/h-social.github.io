@@ -7,6 +7,8 @@ let availableFolders = []; // List of available folders
 let currentFolderFilter = 'all'; // Current folder filter for gallery
 let currentPage = 'config'; // Current page: 'config', 'gallery', 'upload'
 let userInfo = null; // User information from GitHub API
+const MAX_FILES = 50;
+let failedUploads = [];
 
 // DOM elements
 const githubTokenInput = document.getElementById('githubToken');
@@ -439,7 +441,11 @@ function handleGalleryFilterChange() {
 
 // File Selection
 function handleFileSelect(event) {
-    const files = Array.from(event.target.files);
+    let files = Array.from(event.target.files);
+    if (files.length > MAX_FILES) {
+        showError(`Chỉ được chọn tối đa ${MAX_FILES} file/lần. Sẽ chỉ lấy 50 file đầu tiên.`);
+        files = files.slice(0, MAX_FILES);
+    }
     addFiles(files);
 }
 
@@ -456,15 +462,18 @@ function handleDragLeave(event) {
 function handleDrop(event) {
     event.preventDefault();
     uploadArea.classList.remove('dragover');
-    
-    const files = Array.from(event.dataTransfer.files);
+    let files = Array.from(event.dataTransfer.files);
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    
     if (imageFiles.length !== files.length) {
         showError('Chỉ chấp nhận file hình ảnh');
     }
-    
-    addFiles(imageFiles);
+    if (imageFiles.length > MAX_FILES) {
+        showError(`Chỉ được chọn tối đa ${MAX_FILES} file/lần. Sẽ chỉ lấy 50 file đầu tiên.`);
+        files = imageFiles.slice(0, MAX_FILES);
+    } else {
+        files = imageFiles;
+    }
+    addFiles(files);
 }
 
 function addFiles(files) {
@@ -526,57 +535,58 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// Upload to GitHub
-async function uploadFiles() {
+// Upload tuần tự từng file, lưu trạng thái
+async function uploadFiles(filesToUpload = null) {
     if (!githubToken) {
         showError('Vui lòng nhập GitHub Personal Access Token');
         return;
     }
-    
-    if (selectedFiles.length === 0) {
+    if (!filesToUpload) filesToUpload = selectedFiles;
+    if (filesToUpload.length === 0) {
         showError('Vui lòng chọn ít nhất một hình ảnh');
         return;
     }
-    
+    if (filesToUpload.length > MAX_FILES) {
+        showError(`Chỉ được upload tối đa ${MAX_FILES} file/lần.`);
+        filesToUpload = filesToUpload.slice(0, MAX_FILES);
+    }
     const selectedFolder = getSelectedFolder();
     if (!selectedFolder) {
         showError('Vui lòng chọn hoặc nhập tên thư mục');
         return;
     }
-    
     showLoading('Đang upload hình ảnh...');
-    
+    failedUploads = [];
     try {
-        // Ensure repository exists
         await ensureRepositoryExists();
-        
-        // Create folder if it doesn't exist (for new folders)
         if (document.getElementById('newFolder').checked && selectedFolder !== 'images') {
             await createFolder(selectedFolder);
         }
-        
-        const uploadPromises = selectedFiles.map(file => uploadSingleFile(file, selectedFolder));
-        const results = await Promise.all(uploadPromises);
-        
-        const successCount = results.filter(result => result.success).length;
-        const errorCount = results.length - successCount;
-        
+        let successCount = 0;
+        for (let i = 0; i < filesToUpload.length; i++) {
+            const file = filesToUpload[i];
+            document.getElementById('loadingText').textContent = `Đang upload (${i+1}/${filesToUpload.length}): ${file.name}`;
+            const result = await uploadSingleFile(file, selectedFolder);
+            if (result.success) {
+                successCount++;
+            } else {
+                failedUploads.push(file);
+            }
+        }
         hideLoading();
-        
-        if (errorCount === 0) {
+        if (failedUploads.length === 0) {
             showSuccess(`Upload thành công ${successCount} hình ảnh vào thư mục ${selectedFolder}!`);
             selectedFiles = [];
             updateFileList();
             updateUploadButton();
-            loadFolders(); // Refresh folder list
-            // Optionally navigate to gallery to see uploaded images
+            loadFolders();
             setTimeout(() => {
                 if (confirm('Bạn có muốn xem hình ảnh vừa upload không?')) {
                     navigateToGallery();
                 }
             }, 1000);
         } else {
-            showError(`Upload ${successCount} thành công, ${errorCount} thất bại`);
+            showFailedUploadsUI();
         }
     } catch (error) {
         hideLoading();
@@ -584,80 +594,22 @@ async function uploadFiles() {
     }
 }
 
-async function createFolder(folderName) {
-    try {
-        // Create a .gitkeep file to create the folder
-        const response = await fetch(`https://api.github.com/repos/${owner}/${repository}/contents/${folderName}/.gitkeep`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${githubToken}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                message: `Create folder: ${folderName}`,
-                content: btoa(''), // Empty file
-                branch: 'main'
-            })
-        });
-        
-        if (!response.ok) {
-            const error = await response.json();
-            // If folder already exists, that's fine
-            if (error.message && !error.message.includes('already exists')) {
-                throw new Error(error.message);
-            }
-        }
-    } catch (error) {
-        console.error('Error creating folder:', error);
-        // Continue anyway, folder might already exist
-    }
-}
-
-async function uploadSingleFile(file, folder) {
-    try {
-        // Convert file to base64
-        const base64Content = await fileToBase64(file);
-        
-        // Create filename with timestamp
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const filename = `${folder}/${timestamp}-${file.name}`;
-        
-        // GitHub API request
-        const response = await fetch(`https://api.github.com/repos/${owner}/${repository}/contents/${filename}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${githubToken}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                message: `Add image: ${file.name} to ${folder}`,
-                content: base64Content,
-                branch: 'main'
-            })
-        });
-        
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Upload failed');
-        }
-        
-        return { success: true, filename };
-    } catch (error) {
-        console.error('Upload error:', error);
-        return { success: false, error: error.message };
-    }
-}
-
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            const base64 = reader.result.split(',')[1];
-            resolve(base64);
-        };
-        reader.onerror = error => reject(error);
+function showFailedUploadsUI() {
+    let html = `<h3 style='color:#e53e3e;'>Một số file upload thất bại:</h3><ul style='text-align:left;'>`;
+    failedUploads.forEach(f => {
+        html += `<li>${f.name} (${formatFileSize(f.size)})</li>`;
     });
+    html += `</ul><button class='btn btn-primary' onclick='retryFailedUploads()'><i class='fas fa-redo'></i> Upload lại file lỗi</button>`;
+    html += `<button class='btn btn-secondary' style='margin-left:10px;' onclick='closeModal("successModal")'>Đóng</button>`;
+    document.getElementById('successMessage').innerHTML = html;
+    document.getElementById('successModal').style.display = 'block';
+}
+
+function retryFailedUploads() {
+    closeModal('successModal');
+    if (failedUploads.length > 0) {
+        uploadFiles(failedUploads);
+    }
 }
 
 // Gallery Management
