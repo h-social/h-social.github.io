@@ -758,29 +758,164 @@ section h3 {
 }
 
 @media (max-width: 480px) {
-    .upload-area {
-        padding: 20px;
+    .container {
+        padding: 5px;
     }
-    
-    .upload-content i {
-        font-size: 2rem;
+    .main-header {
+        padding: 10px;
+        border-radius: 0 0 15px 15px;
     }
-    
+    .header-content h1 {
+        font-size: 1.1rem;
+    }
+    .avatar {
+        width: 38px;
+        height: 38px;
+    }
+    .dropdown-menu {
+        right: 0;
+        min-width: 150px;
+        font-size: 0.95rem;
+    }
+    .dropdown-header {
+        padding: 10px 12px;
+    }
+    .dropdown-item {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+    .welcome-section h2 {
+        font-size: 1.2rem;
+    }
+    .welcome-section p {
+        font-size: 1rem;
+    }
+    .welcome-features {
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .feature-item {
+        padding: 8px 10px;
+        font-size: 0.95rem;
+    }
+    section {
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .token-input {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .token-input input {
+        font-size: 0.95rem;
+        padding: 8px 10px;
+    }
+    .btn, .btn-sm {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+        min-width: 36px;
+        min-height: 36px;
+    }
+    .gallery-filter {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+    }
+    .gallery-controls {
+        gap: 8px;
+    }
     .gallery {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
-    
+    .gallery-item {
+        border-radius: 8px;
+    }
+    .gallery-item img {
+        height: 120px;
+        border-radius: 6px 6px 0 0;
+    }
+    .gallery-item-info {
+        padding: 8px;
+    }
+    .gallery-item-info h4 {
+        font-size: 1rem;
+    }
+    .gallery-item-folder {
+        font-size: 0.85rem;
+    }
+    .gallery-item-actions {
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .file-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 8px;
+        border-radius: 6px;
+    }
+    .file-info i {
+        font-size: 1.1rem;
+    }
+    .file-details h4 {
+        font-size: 1rem;
+    }
+    .upload-area {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+    .upload-content i {
+        font-size: 1.5rem;
+    }
     .folder-selection {
-        padding: 15px;
+        padding: 8px;
+        border-radius: 8px;
     }
-    
-    .gallery-filter {
-        padding: 15px;
+    .folder-controls {
+        gap: 8px;
     }
-    
-    .dropdown-menu {
-        right: -100px;
-        min-width: 180px;
+    .folder-select, .folder-input {
+        font-size: 0.95rem;
+        padding: 8px 10px;
+        min-width: 120px;
+    }
+    .image-preview-container {
+        min-width: 0;
+        max-width: 99vw;
+        border-radius: 0;
+    }
+    .image-preview-header {
+        padding: 10px 8px 6px 8px;
+    }
+    .image-preview-info h3 {
+        font-size: 1rem;
+    }
+    .image-preview-info span {
+        font-size: 0.85rem;
+    }
+    .image-preview-content {
+        min-height: 180px;
+        max-height: 40vh;
+    }
+    .image-preview-content img {
+        max-width: 98vw;
+        max-height: 38vh;
+        border-radius: 4px;
+    }
+    .image-preview-nav {
+        width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
+    }
+    .empty-favorites {
+        padding: 20px 0;
+    }
+    .empty-favorites i {
+        font-size: 2rem;
+    }
+    .empty-favorites h3 {
+        font-size: 1.1rem;
     }
 }
 
@@ -908,3 +1043,8 @@ section h3 {
 .empty-favorites h3 {
     margin-bottom: 10px;
 } 
+
+section.upload-section {
+    width: 100%;
+    max-width: 97svw;
+}
