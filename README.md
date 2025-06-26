@@ -1,185 +1,145 @@
 # H-Social Image Manager
 
-Ứng dụng quản lý hình ảnh thông minh với GitHub, cho phép upload, xem và tải về hình ảnh từ repository GitHub Pages của bạn.
+Ứng dụng quản lý hình ảnh thông minh với hỗ trợ GitHub và Cloudinary.
 
-## ✨ Tính năng chính
+## Cấu trúc dự án (Refactored)
 
-### 🔐 Xác thực thông minh
-- **Tự động phát hiện username**: Ứng dụng sẽ tự động kiểm tra và lấy thông tin user từ GitHub token
-- **Hỗ trợ nhiều tài khoản**: Có thể sử dụng token của bất kỳ tài khoản GitHub nào
-- **Tự động cấu hình repository**: Sử dụng repository `username.github.io` của tài khoản tương ứng
-- **Hiển thị thông tin tài khoản**: Avatar, tên và thông tin chi tiết của user
-
-### 🏗️ Tự động tạo repository
-- **Tự động tạo repository**: Nếu repository `username.github.io` chưa tồn tại, ứng dụng sẽ tự động tạo
-- **Khởi tạo GitHub Pages**: Repository được tạo với cấu hình GitHub Pages sẵn sàng
-- **Không cần cấu hình thủ công**: Tất cả được xử lý tự động
-
-### 📁 Quản lý thư mục
-- **Thư mục mặc định**: Upload vào thư mục `images/`
-- **Thư mục có sẵn**: Chọn từ các thư mục đã tồn tại
-- **Tạo thư mục mới**: Tự động tạo thư mục mới khi upload
-- **Lọc theo thư mục**: Xem hình ảnh theo từng thư mục cụ thể
-
-### 🖼️ Quản lý hình ảnh
-- **Upload nhiều file**: Hỗ trợ upload nhiều hình ảnh cùng lúc
-- **Drag & Drop**: Kéo thả file trực tiếp vào ứng dụng
-- **Xem thư viện**: Gallery với preview hình ảnh
-- **Tải về**: Tải từng hình ảnh hoặc tất cả
-- **Xóa hình ảnh**: Xóa hình ảnh không cần thiết
-
-### 🎨 Giao diện hiện đại
-- **Multi-page SPA**: 3 trang chính: Cấu hình, Upload, Gallery
-- **Responsive design**: Tương thích với mọi thiết bị
-- **Avatar dropdown**: Menu người dùng với thông tin chi tiết
-- **Loading states**: Hiển thị trạng thái xử lý
-- **Animations**: Hiệu ứng mượt mà
-
-## 🚀 Cách sử dụng
-
-### 1. Tạo GitHub Personal Access Token
-1. Truy cập [GitHub Settings > Tokens](https://github.com/settings/tokens)
-2. Click "Generate new token (classic)"
-3. Chọn quyền:
-   - `repo` (Full control of private repositories)
-   - `user` (Update ALL user data)
-4. Copy token và lưu lại
-
-### 2. Sử dụng ứng dụng
-1. **Mở ứng dụng**: Mở file `index.html` trong trình duyệt
-2. **Đăng nhập**: Nhập GitHub token và click "Đăng Nhập"
-   - Ứng dụng sẽ tự động kiểm tra token
-   - Phát hiện username và repository
-   - **Tự động tạo repository nếu chưa tồn tại**
-   - Hiển thị thông tin tài khoản
-3. **Upload hình ảnh**:
-   - Chọn trang "Upload hình ảnh" từ menu
-   - Chọn thư mục (mặc định/có sẵn/mới)
-   - Kéo thả hoặc chọn file
-   - Click "Upload Lên GitHub"
-4. **Xem thư viện**:
-   - Chọn trang "Thư viện hình ảnh"
-   - Lọc theo thư mục nếu cần
-   - Tải về hoặc xóa hình ảnh
-
-## 📋 Yêu cầu hệ thống
-
-- **Trình duyệt hiện đại**: Chrome, Firefox, Safari, Edge
-- **Kết nối internet**: Để tương tác với GitHub API
-- **GitHub account**: Token với quyền `repo` và `user`
-
-## 🔧 Cấu trúc dự án
+### 📁 Cấu trúc thư mục
 
 ```
 h-social.github.io/
-├── index.html          # Trang chính của ứng dụng
-├── styles.css          # CSS styles
-├── script.js           # JavaScript logic
-├── README.md           # Tài liệu hướng dẫn
-├── demo.html           # Trang demo
-└── .gitignore          # Git ignore file
+├── index.html              # File HTML chính
+├── style.css               # CSS styles
+├── config.js               # Cấu hình toàn bộ ứng dụng
+├── utils.js                # Các hàm tiện ích
+├── app.js                  # Class chính quản lý ứng dụng
+├── favorites.js            # Quản lý favorites
+├── services/               # Thư mục chứa các service
+│   ├── githubService.js    # Service cho GitHub API
+│   └── cloudinaryService.js # Service cho Cloudinary API
+└── components/             # Thư mục chứa các component
+    ├── uploadManager.js    # Component quản lý upload
+    ├── galleryManager.js   # Component quản lý gallery
+    └── imagePreview.js     # Component preview ảnh
 ```
 
-## 🎯 Tính năng nổi bật
+### 🔧 Các module chính
 
-### Tự động phát hiện tài khoản
-```javascript
-// Tự động lấy thông tin user từ token
-const userInfo = await fetch('https://api.github.com/user', {
-    headers: { 'Authorization': `token ${token}` }
-});
+#### 1. **config.js** - Cấu hình toàn bộ ứng dụng
+- Chứa tất cả constants và cấu hình
+- Dễ dàng thay đổi các giá trị như giới hạn file, kích thước gallery, etc.
+- Quản lý storage keys và default settings
 
-// Tự động cấu hình repository
-owner = userInfo.login;
-repository = `${userInfo.login}.github.io`;
-```
+#### 2. **utils.js** - Các hàm tiện ích
+- File utilities (format size, base64 conversion)
+- Storage utilities (localStorage wrapper)
+- Validation utilities
+- DOM utilities
+- Error handling
+- Debounce/throttle functions
 
-### Tự động tạo repository
-```javascript
-// Kiểm tra và tạo repository nếu chưa tồn tại
-async function ensureRepositoryExists() {
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repository}`);
-    if (response.status === 404) {
-        // Tự động tạo repository với GitHub Pages
-        await createRepository();
-    }
-}
-```
+#### 3. **services/** - Các service API
+- **githubService.js**: Xử lý tất cả tương tác với GitHub API
+- **cloudinaryService.js**: Xử lý tất cả tương tác với Cloudinary API
+- Mỗi service có interface thống nhất (init, upload, delete, etc.)
 
-### Hỗ trợ nhiều tài khoản
-- Mỗi token sẽ tự động sử dụng repository của tài khoản tương ứng
-- Có thể đăng xuất và đăng nhập với tài khoản khác
-- Thông tin tài khoản được hiển thị rõ ràng
+#### 4. **components/** - Các component UI
+- **uploadManager.js**: Quản lý upload với queue, progress, retry
+- **galleryManager.js**: Quản lý gallery với pagination, filtering
+- **imagePreview.js**: Modal preview ảnh với navigation
 
-### Quản lý thư mục thông minh
-- Tự động tạo thư mục mới bằng file `.gitkeep`
-- Lọc hình ảnh theo thư mục
-- Hiển thị đường dẫn thư mục cho mỗi hình ảnh
+#### 5. **app.js** - Class chính
+- Khởi tạo và quản lý toàn bộ ứng dụng
+- Điều hướng giữa các trang
+- Quản lý state và services
+- Khởi tạo các components
 
-## 🛠️ Công nghệ sử dụng
+### 🚀 Lợi ích của cấu trúc mới
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **API**: GitHub REST API v3
-- **UI Framework**: Font Awesome Icons
-- **Storage**: LocalStorage cho token và user info
+#### ✅ **Dễ maintain**
+- Code được tách thành các module riêng biệt
+- Mỗi file có trách nhiệm rõ ràng
+- Dễ dàng tìm và sửa lỗi
 
-## 📱 Responsive Design
+#### ✅ **Dễ mở rộng**
+- Thêm service mới chỉ cần tạo file trong `services/`
+- Thêm component mới chỉ cần tạo file trong `components/`
+- Interface thống nhất giữa các service
 
-Ứng dụng được thiết kế responsive với breakpoints:
-- **Desktop**: > 768px
-- **Tablet**: 480px - 768px  
-- **Mobile**: < 480px
+#### ✅ **Tái sử dụng**
+- Các utility functions có thể dùng ở nhiều nơi
+- Components có thể tái sử dụng
+- Services có thể dùng cho các dự án khác
 
-## 🔒 Bảo mật
+#### ✅ **Performance**
+- Code được load theo thứ tự đúng
+- Lazy loading cho các component
+- Tối ưu memory usage
 
-- Token được lưu trong LocalStorage (chỉ local)
-- Không có backend, tất cả xử lý ở client-side
-- Token chỉ được sử dụng để gọi GitHub API
-- Có thể đăng xuất để xóa token
+### 🔄 Cách thêm tính năng mới
 
-## 🎨 Customization
+#### Thêm service mới:
+1. Tạo file `services/newService.js`
+2. Implement interface giống GitHub/Cloudinary service
+3. Thêm vào `app.js` trong `initializeComponents()`
 
-Có thể tùy chỉnh:
-- **Màu sắc**: Chỉnh sửa CSS variables
-- **Repository**: Thay đổi tên repository mặc định
-- **Thư mục**: Thay đổi thư mục mặc định
-- **UI**: Tùy chỉnh giao diện trong `styles.css`
+#### Thêm component mới:
+1. Tạo file `components/newComponent.js`
+2. Extend từ base component hoặc tạo class riêng
+3. Thêm vào HTML và khởi tạo trong `app.js`
 
-## 📄 License
+#### Thêm utility mới:
+1. Thêm function vào `utils.js`
+2. Export để sử dụng ở các module khác
 
-MIT License - Tự do sử dụng và chỉnh sửa.
+### 📱 Responsive Design
+- Mobile-first approach
+- CSS Grid và Flexbox
+- Touch-friendly interface
+- Optimized cho iPhone và Android
 
-## 🤝 Đóng góp
+### 🎨 UI/UX Features
+- Modern design với gradient và blur effects
+- Smooth animations và transitions
+- Drag & drop upload
+- Image preview với navigation
+- Favorites system
+- Progress tracking
+- Error handling với user-friendly messages
 
-Mọi đóng góp đều được chào đón! Vui lòng:
-1. Fork repository
-2. Tạo feature branch
-3. Commit changes
-4. Push to branch
-5. Tạo Pull Request
+### 🔒 Security
+- Token validation
+- File type validation
+- Size limits
+- Secure storage handling
 
-## 📞 Hỗ trợ
+### 📊 Performance Features
+- Lazy loading images
+- Pagination cho gallery
+- Queue system cho upload
+- Retry mechanism
+- Cache management
 
-Nếu gặp vấn đề, vui lòng:
-1. Kiểm tra token có đúng quyền không
-2. Đảm bảo có quyền tạo repository
-3. Kiểm tra kết nối internet
-4. Tạo issue trên GitHub
+## Cách sử dụng
 
-## 🔧 Troubleshooting
+1. **Clone repository**
+2. **Mở `index.html` trong browser**
+3. **Chọn service (GitHub hoặc Cloudinary)**
+4. **Cấu hình thông tin cần thiết**
+5. **Bắt đầu upload và quản lý ảnh**
 
-### Lỗi 404 Not Found
-- **Nguyên nhân**: Repository hoặc thư mục chưa tồn tại
-- **Giải pháp**: Ứng dụng sẽ tự động tạo repository và thư mục cần thiết
+## Dependencies
 
-### Lỗi "Repository not found"
-- **Nguyên nhân**: Repository chưa được tạo
-- **Giải pháp**: Ứng dụng sẽ tự động tạo repository `username.github.io`
+- Font Awesome 6.0.0 (CDN)
+- Modern browser với ES6+ support
 
-### Lỗi "Folder not found"
-- **Nguyên nhân**: Thư mục chưa tồn tại
-- **Giải pháp**: Ứng dụng sẽ tự động tạo thư mục bằng file `.gitkeep`
+## Browser Support
 
----
+- Chrome 60+
+- Firefox 55+
+- Safari 12+
+- Edge 79+
 
-**H-Social Image Manager** - Quản lý hình ảnh thông minh với GitHub! 🚀
+## License
+
+MIT License

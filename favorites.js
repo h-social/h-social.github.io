@@ -82,7 +82,7 @@ class ImagePreviewModal {
 
     createModal() {
         const modalHTML = `
-            <div id="imagePreviewModal" class="image-preview-modal">
+            <div id="imagePreviewModal" class="image-preview-modal" style="display:none">
                 <div class="image-preview-overlay"></div>
                 <div class="image-preview-container">
                     <div class="image-preview-header">

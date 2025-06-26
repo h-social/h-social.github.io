@@ -1,0 +1,26 @@
+<div class="component newComponent">
+    <h2>Configure Your Service</h2>
+    <p>Choose your preferred image hosting service and configure it below.</p>
+    <!-- GitHub Configuration -->
+    <div id="githubConfig" class="service-config">
+        <h3>GitHub Configuration</h3>
+        <p>Upload images to your GitHub repository using GitHub Pages.</p>
+
+        <div class="form-group">
+            <label for="githubToken">GitHub Personal Access Token:</label>
+            <input type="password" id="githubToken" placeholder="Enter your GitHub token">
+            <small>
+                <a href="https://github.com/settings/tokens" target="_blank">
+                    Create a new token here
+                </a>
+                <br>
+                Required permissions: repo, user
+            </small>
+        </div>
+
+        <button class="btn btn-primary" onclick="app.handleGitHubConfig()">
+            <i class="fas fa-check"></i> Configure GitHub
+        </button>
+    </div>
+</div>
+
