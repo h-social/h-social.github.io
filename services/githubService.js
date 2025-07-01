@@ -118,7 +118,7 @@ class GitHubService {
     }
 
     isImageFile(item) {
-        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.heic'];
         const fileName = item.name.toLowerCase();
         return imageExtensions.some(ext => fileName.endsWith(ext));
     }

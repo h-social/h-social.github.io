@@ -112,6 +112,13 @@ class App {
         document.querySelector(`[data-service="${serviceName}"]`).classList.add('active');
     }
 
+
+    initMain() {
+        const galleryContainer = document.getElementById('galleryContainer');
+        if (galleryContainer && !this.components.galleryManager) {
+            this.components.galleryManager = new GalleryManager(galleryContainer, this.currentService);
+        }
+    }
     async handleGitHubConfig() {
         const token = document.getElementById('githubToken').value.trim();
         
@@ -172,13 +179,6 @@ class App {
         document.querySelectorAll('.page').forEach(page => {
             page.style.display = 'none';
         });
-    }
-
-    initMain() {
-        const galleryContainer = document.getElementById('galleryContainer');
-        if (galleryContainer && !this.components.galleryManager) {
-            this.components.galleryManager = new GalleryManager(galleryContainer, this.currentService);
-        }
     }
 
     initializeComponents() {

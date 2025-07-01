@@ -1,7 +1,7 @@
 class PageService {
 
     constructor() {
-        this.orgPath = '/views/';
+        this.orgPath = '../views/';
     }
 
     async redirectPage(page, onLoadCallback) {
