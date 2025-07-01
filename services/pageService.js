@@ -1,7 +1,7 @@
 class PageService {
 
     constructor() {
-        this.orgPath = 'file:///D:/Coding/MiniProject/h-social.github.io/views/';
+        this.orgPath = '/views/';
     }
 
     async redirectPage(page, onLoadCallback) {
