@@ -115,6 +115,7 @@ class ImagePreviewModal {
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
+        $('#imagePreviewModal').remove();
         this.modal = document.getElementById('imagePreviewModal');
     }
 

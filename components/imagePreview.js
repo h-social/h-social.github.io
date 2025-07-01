@@ -14,63 +14,50 @@ class ImagePreview {
     }
 
     createModal() {
-        const modal = Utils.createElement('div', 'image-preview-modal', `
+        const modal = Utils.createElement('div', 'image-preview-modal tiktok-style', `
             <div class="modal-overlay" id="previewOverlay">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 id="previewTitle">Image Preview</h3>
-                        <button class="close-btn" id="closePreview">
-                            <i class="fas fa-times"></i>
+                <div class="tiktok-preview-content">
+                    <img id="previewImage" class="tiktok-preview-img" src="" alt="">
+                    <div class="tiktok-actions">
+                        <button class="tiktok-action-btn" id="favoriteBtn">
+                            <i class="fas fa-heart"></i>
+                            <span id="likeCount">0</span>
+                        </button>
+                        <button class="tiktok-action-btn" id="bookmarkBtn">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                        <button class="tiktok-action-btn" id="shareBtn">
+                            <i class="fas fa-share"></i>
+                        </button>
+                        <button class="tiktok-action-btn" id="deleteBtn">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </div>
-                    
-                    <div class="modal-body">
-                        <div class="image-container">
-                            <button class="nav-btn prev-btn" id="prevBtn">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            
-                            <div class="image-wrapper">
-                                <img id="previewImage" src="" alt="">
-                            </div>
-                            
-                            <button class="nav-btn next-btn" id="nextBtn">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="image-info">
-                            <span id="imageName"></span>
-                            <span id="imageIndex"></span>
-                        </div>
-                        
-                        <div class="image-actions">
-                            <button class="btn btn-primary" id="downloadBtn">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                            <button class="btn btn-secondary" id="favoriteBtn">
-                                <i class="fas fa-heart"></i> Favorite
-                            </button>
-                            <button class="btn btn-danger" id="deleteBtn">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </div>
+                    <div class="tiktok-info">
+                        <div class="tiktok-username" id="previewTitle">USERNAME</div>
+                        <div class="tiktok-desc" id="imageName">Description #hashtag</div>
+                        <div class="tiktok-music"><i class="fas fa-music"></i> <span id="musicInfo">Original Sound</span></div>
+                        <div class="tiktok-index" id="imageIndex"></div>
+                    </div>
+                    <div class="tiktok-navbar">
+                        <button class="nav-btn-tiktok"><i class="fas fa-home"></i></button>
+                        <button class="nav-btn-tiktok"><i class="fas fa-user-friends"></i></button>
+                        <button class="nav-btn-tiktok nav-btn-add"><i class="fas fa-plus"></i></button>
+                        <button class="nav-btn-tiktok"><i class="fas fa-inbox"></i></button>
+                        <button class="nav-btn-tiktok"><i class="fas fa-user"></i></button>
                     </div>
                 </div>
             </div>
         `);
-        
         document.body.appendChild(modal);
     }
 
     bindEvents() {
         const overlay = document.getElementById('previewOverlay');
-        const closeBtn = document.getElementById('closePreview');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
         const favoriteBtn = document.getElementById('favoriteBtn');
         const deleteBtn = document.getElementById('deleteBtn');
+        const bookmarkBtn = document.getElementById('bookmarkBtn');
+        const shareBtn = document.getElementById('shareBtn');
 
         // Close modal
         overlay.addEventListener('click', (e) => {
@@ -78,30 +65,55 @@ class ImagePreview {
                 this.hide();
             }
         });
-        
-        closeBtn.addEventListener('click', () => this.hide());
-
-        // Navigation
-        prevBtn.addEventListener('click', () => this.showPrevious());
-        nextBtn.addEventListener('click', () => this.showNext());
 
         // Actions
-        downloadBtn.addEventListener('click', () => this.downloadCurrent());
-        favoriteBtn.addEventListener('click', () => this.toggleFavorite());
+        favoriteBtn.addEventListener('click', () => {
+            const currentImage = this.images[this.currentIndex];
+            if (currentImage && window.app && window.app.components && window.app.components.galleryManager) {
+                window.app.components.galleryManager.toggleFavorite(currentImage.url, currentImage.name);
+                this.updateDisplay();
+            }
+        });
         deleteBtn.addEventListener('click', () => this.deleteCurrent());
+        bookmarkBtn.addEventListener('click', () => this.bookmarkCurrent && this.bookmarkCurrent());
+        shareBtn.addEventListener('click', () => this.shareCurrent && this.shareCurrent());
 
-        // Keyboard navigation
+        // Vertical swipe (touch events)
+        let startY = null;
+        const img = document.getElementById('previewImage');
+        img.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                startY = e.touches[0].clientY;
+            }
+        });
+        img.addEventListener('touchend', (e) => {
+            if (startY === null) return;
+            const endY = e.changedTouches[0].clientY;
+            const deltaY = endY - startY;
+            if (Math.abs(deltaY) > 50) {
+                if (deltaY < 0) this.showNext(); // swipe up
+                else this.showPrevious(); // swipe down
+            }
+            startY = null;
+        });
+
+        // Mouse wheel for desktop vertical navigation
+        img.addEventListener('wheel', (e) => {
+            if (e.deltaY > 0) this.showNext();
+            else if (e.deltaY < 0) this.showPrevious();
+        });
+
+        // Keyboard navigation (up/down)
         document.addEventListener('keydown', (e) => {
             if (!this.isVisible) return;
-            
             switch (e.key) {
                 case 'Escape':
                     this.hide();
                     break;
-                case 'ArrowLeft':
+                case 'ArrowUp':
                     this.showPrevious();
                     break;
-                case 'ArrowRight':
+                case 'ArrowDown':
                     this.showNext();
                     break;
             }
@@ -121,30 +133,19 @@ class ImagePreview {
     }
 
     updateDisplay() {
-        const currentImage = this.images[this.currentIndex] || { url: '', name: '' };
+        const currentImage = this.images[this.currentIndex] || { url: '', name: '', html_url: '', likeCount: 0 };
         const isFavorite = window.favoritesManager && window.favoritesManager.isFavorite(currentImage.url);
-        
-        // Update image
         const previewImage = document.getElementById('previewImage');
-        previewImage.src = currentImage.url;
+        const urlImage = currentImage.html_url ? currentImage.html_url.replace('/blob/','/refs/heads/').replace('https://github.com/','https://raw.githubusercontent.com/') : currentImage.url;
+        previewImage.src = urlImage;
         previewImage.alt = currentImage.name;
-        
-        // Update title and info
-        document.getElementById('previewTitle').textContent = currentImage.name;
-        document.getElementById('imageName').textContent = currentImage.name;
+        document.getElementById('previewTitle').textContent = currentImage.username || 'USERNAME';
+        document.getElementById('imageName').textContent = currentImage.name || '';
+        document.getElementById('musicInfo').textContent = currentImage.music || 'Original Sound';
         document.getElementById('imageIndex').textContent = `${this.currentIndex + 1} / ${this.images.length}`;
-        
-        // Update favorite button
         const favoriteBtn = document.getElementById('favoriteBtn');
-        favoriteBtn.className = `btn ${isFavorite ? 'btn-danger' : 'btn-secondary'}`;
-        favoriteBtn.innerHTML = `<i class="fas fa-heart"></i> ${isFavorite ? 'Unfavorite' : 'Favorite'}`;
-        
-        // Update navigation buttons
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        
-        prevBtn.style.display = this.currentIndex > 0 ? 'block' : 'none';
-        nextBtn.style.display = this.currentIndex < this.images.length - 1 ? 'block' : 'none';
+        favoriteBtn.className = `tiktok-action-btn ${isFavorite ? 'liked' : ''}`;
+        document.getElementById('likeCount').textContent = currentImage.likeCount || 0;
     }
 
     showModal() {
@@ -160,8 +161,9 @@ class ImagePreview {
         const modal = document.getElementById('previewOverlay');
         modal.style.display = 'none';
         this.isVisible = false;
-        
+        // $('.image-preview-modal').remove();
         // Restore body scroll
+        imagePreviewModal.init();
         document.body.style.overflow = '';
     }
 
@@ -243,6 +245,10 @@ class ImagePreview {
                 if (window.galleryManager) {
                     window.galleryManager.refresh();
                 }
+                if (!window.imagePreview) {
+                    window.imagePreview = new ImagePreview();
+                }
+
             } else {
                 this.showMessage(`Failed to delete: ${result.error}`, 'error');
             }

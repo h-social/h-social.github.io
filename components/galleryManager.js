@@ -128,7 +128,6 @@ class GalleryManager {
 
     createImageCard(image) {
         const isFavorite = (window.favoritesManager && window.favoritesManager.isFavorite(image.url)) || false;
-        debugger;
         const urlImage = image.html_url.replace('/blob/','/refs/heads/').replace('https://github.com/','https://raw.githubusercontent.com/')
 
         return `
@@ -137,17 +136,17 @@ class GalleryManager {
                     <img src="${urlImage}" alt="${image.name}" loading="lazy">
                     <div class="image-overlay">
                         <div class="image-actions">
-                            <button class="btn btn-sm btn-primary" onclick="galleryManager.previewImage('${image.url}', '${image.name}')">
+                            <button class="btn btn-sm btn-primary" onclick="app.components.galleryManager.previewImage('${image.url}', '${image.name}')">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-sm btn-secondary" onclick="galleryManager.downloadImage('${image.url}', '${image.name}')">
+                            <button class="btn btn-sm btn-secondary" onclick="app.components.galleryManager.downloadImage('${image.url}', '${image.name}')">
                                 <i class="fas fa-download"></i>
                             </button>
                             <button class="btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline'}" 
-                                    onclick="galleryManager.toggleFavorite('${image.url}', '${image.name}')">
+                                    onclick="app.components.galleryManager.toggleFavorite('${image.url}', '${image.name}')">
                                 <i class="fas fa-heart"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger" onclick="galleryManager.deleteImage('${image.path}', '${image.name}')">
+                            <button class="btn btn-sm btn-danger" onclick="app.components.galleryManager.deleteImage('${image.path}', '${image.name}')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -242,9 +241,10 @@ class GalleryManager {
     }
 
     previewImage(url, name) {
-        if (window.imagePreview) {
-            window.imagePreview.show(url, name, this.filteredImages);
+        if (!window.imagePreview) {
+            window.imagePreview = new ImagePreview();
         }
+         window.imagePreview.show(url, name, this.filteredImages);
     }
 
     downloadImage(url, name) {
