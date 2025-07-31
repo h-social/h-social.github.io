@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery - Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/script/tailwindcss.js"></script>
+    <script src="/script/tailwind-usage.js"></script>
+    <link rel="stylesheet" href="/style/main.css"></link>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="bg-white shadow-sm border-b">
+        <div class="max-w-md mx-auto px-4 py-4">
+            <a class="flex items-center gap-3" href="/">
+                <button id="close-settings" class="text-2xl">←</button>
+                <h2 class="text-xl font-semibold">Cài đặt</h2>
+            </a>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto p-4 space-y-6" style="
+        max-height: calc( var(--app-height) - 65px );
+        overflow: auto;
+    ">
+        <!-- Token Settings Section -->
+        <div class="space-y-4">
+            <h2 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                <i class="fas fa-lock text-primary"></i>
+                <span>Cài đặt Token</span>
+            </h2>
+
+            <!-- GitHub Token Card -->
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="flex items-center space-x-3 mb-3">
+                    <i class="fab fa-github text-2xl text-gray-700"></i>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">GitHub Token</h3>
+                        <p class="text-sm text-gray-500">Dùng để lưu trữ ảnh trong repository cá nhân của bạn.</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="githubToken"
+                            placeholder="Nhập GitHub token..."
+                            class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200"
+                        >
+                        <button 
+                            type="button" 
+                            id="toggleGithub"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <button class="w-full bg-success hover:bg-success-dark text-white font-medium py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center space-x-2">
+                        <i class="fas fa-save"></i>
+                        <span>Save Token</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notify Token Card -->
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="flex items-center space-x-3 mb-3">
+                    <i class="fas fa-bell text-2xl text-yellow-500"></i>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Notify Token</h3>
+                        <p class="text-sm text-gray-500">Gửi thông báo khi upload thành công hoặc xảy ra lỗi.</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="notifyToken"
+                            placeholder="Nhập notify token..."
+                            class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200"
+                        >
+                        <button 
+                            type="button" 
+                            id="toggleNotify"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <button class="w-full bg-success hover:bg-success-dark text-white font-medium py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center space-x-2">
+                        <i class="fas fa-save"></i>
+                        <span>Save Token</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Upload Section -->
+        <div class="space-y-4">
+            <h2 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                <i class="fas fa-images text-primary"></i>
+                <span>Cập nhật hình ảnh</span>
+            </h2>
+
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <!-- Choose Image -->
+                <div class="mb-6">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <i class="fas fa-upload text-primary"></i>
+                        <span class="font-medium text-gray-700">Chọn ảnh từ máy</span>
+                    </div>
+                    
+                    <label class="block">
+                        <input 
+                            type="file" 
+                            id="imageInput"
+                            accept="image/*"
+                            class="hidden"
+                        >
+                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-primary hover:bg-blue-50 transition-all duration-200">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-600 font-medium">Choose Image</p>
+                            <p class="text-sm text-gray-400">Click to select an image file</p>
+                        </div>
+                    </label>
+                    
+                    <!-- Image Preview -->
+                    <div id="imagePreview" class="hidden mt-4">
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl">
+                            <img id="previewImg" class="w-16 h-16 object-cover rounded-lg" alt="Preview">
+                            <div class="flex-1">
+                                <p id="fileName" class="font-medium text-gray-700"></p>
+                                <p id="fileSize" class="text-sm text-gray-500"></p>
+                            </div>
+                            <button id="removeImage" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Selection -->
+                <div class="mb-6">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <i class="fas fa-tags text-primary"></i>
+                        <span class="font-medium text-gray-700">Chọn category</span>
+                    </div>
+                    
+                    <select id="categorySelect" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none mb-3">
+                        <option value="">Chọn category có sẵn...</option>
+                        <option value="nature">Nature</option>
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                        <option value="street">Street Photography</option>
+                        <option value="macro">Macro</option>
+                    </select>
+                    
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-500">hoặc</span>
+                        <input 
+                            type="text" 
+                            id="newCategory"
+                            placeholder="Tạo category mới..."
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
+                        >
+                    </div>
+                </div>
+
+                <!-- Upload Button -->
+                <button 
+                    id="uploadBtn"
+                    class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled
+                >
+                    <i class="fas fa-cloud-upload-alt text-lg"></i>
+                    <span>Upload Image</span>
+                </button>
+
+                <!-- Upload Status -->
+                <div id="uploadStatus" class="hidden mt-4 p-3 rounded-xl text-center">
+                    <div id="uploadSuccess" class="hidden text-success">
+                        <i class="fas fa-check-circle text-lg mb-1"></i>
+                        <p class="font-medium">Upload thành công!</p>
+                    </div>
+                    <div id="uploadError" class="hidden text-red-500">
+                        <i class="fas fa-times-circle text-lg mb-1"></i>
+                        <p class="font-medium">Upload thất bại. Vui lòng thử lại.</p>
+                    </div>
+                    <div id="uploadLoading" class="hidden text-primary">
+                        <i class="fas fa-spinner fa-spin text-lg mb-1"></i>
+                        <p class="font-medium">Đang upload...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="space-y-4 pb-6">
+
+            <p class="text-center text-sm text-gray-500">
+                All settings are saved locally and securely.
+            </p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { Firebase } from "/script/function/Firebase.js";
+        import { FirebaseQuery } from "/script/function/firebase/firebase-query.js";
+        const firebase = new Firebase();
+        const query = new FirebaseQuery(firebase);
+        const onInit = async () =>{
+            const value = await query.getDoc("SettingToken", "github")
+            console.log(value)
+            const input = document.getElementById("githubToken");
+            input.value(value)
+        }
+        onInit();
+        // Toggle password visibility
+        function setupPasswordToggle(inputId, toggleId) {
+            const input = document.getElementById(inputId);
+            const toggle = document.getElementById(toggleId);
+            
+            toggle.addEventListener('click', function() {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+        }
+
+        setupPasswordToggle('githubToken', 'toggleGithub');
+        setupPasswordToggle('notifyToken', 'toggleNotify');
+
+        // Image upload functionality
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeImage = document.getElementById('removeImage');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const autoUpload = document.getElementById('autoUpload');
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    fileName.textContent = file.name;
+                    fileSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                    imagePreview.classList.remove('hidden');
+                    uploadBtn.disabled = false;
+                    
+                    // Auto-upload if enabled
+                    if (autoUpload.checked) {
+                        setTimeout(() => {
+                            uploadBtn.click();
+                        }, 500);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeImage.addEventListener('click', function() {
+            imageInput.value = '';
+            imagePreview.classList.add('hidden');
+            uploadBtn.disabled = true;
+            hideUploadStatus();
+        });
+
+        // Upload button functionality
+        uploadBtn.addEventListener('click', function() {
+            if (!imageInput.files[0]) return;
+            
+            showUploadStatus('loading');
+            
+            // Simulate upload process
+            setTimeout(() => {
+                const success = Math.random() > 0.2; // 80% success rate for demo
+                showUploadStatus(success ? 'success' : 'error');
+                
+                if (success) {
+                    setTimeout(() => {
+                        // Reset form after successful upload
+                        imageInput.value = '';
+                        imagePreview.classList.add('hidden');
+                        uploadBtn.disabled = true;
+                        document.getElementById('categorySelect').value = '';
+                        document.getElementById('newCategory').value = '';
+                        hideUploadStatus();
+                    }, 2000);
+                }
+            }, 2000);
+        });
+
+        function showUploadStatus(type) {
+            uploadStatus.classList.remove('hidden');
+            document.getElementById('uploadSuccess').classList.add('hidden');
+            document.getElementById('uploadError').classList.add('hidden');
+            document.getElementById('uploadLoading').classList.add('hidden');
+            
+            document.getElementById('upload' + type.charAt(0).toUpperCase() + type.slice(1)).classList.remove('hidden');
+        }
+
+        function hideUploadStatus() {
+            uploadStatus.classList.add('hidden');
+        }
+
+        // Save token buttons
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('Save Token')) {
+                button.addEventListener('click',async function() {
+                    const tokenInput = this.closest('.bg-white').querySelector('input[type="password"], input[type="text"]');
+                    const strValue = tokenInput.value.trim();
+                    if (strValue) {
+                        await query.setDoc("SettingToken", "github", strValue)
+                        alert('Demo: Token saved successfully!');
+                    } else {
+                        alert('Please enter a token first.');
+                    }
+                });
+            }
+        });
+
+        // New category input
+        document.getElementById('newCategory').addEventListener('input', function() {
+            if (this.value.trim()) {
+                document.getElementById('categorySelect').value = '';
+            }
+        });
+
+        document.getElementById('categorySelect').addEventListener('change', function() {
+            if (this.value) {
+                document.getElementById('newCategory').value = '';
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'967251006133fd78',t:'MTc1Mzg1MTg3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

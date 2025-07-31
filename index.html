@@ -1,149 +1,34 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Gallery</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-        
-        .image-item {
-            aspect-ratio: 1;
-            overflow: hidden;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        
-        .image-item:hover {
-            transform: scale(1.02);
-        }
-        
-        .image-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-        }
-        
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            padding: 8px 0;
-            z-index: 100;
-        }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px;
-            cursor: pointer;
-            transition: color 0.2s ease;
-        }
-        
-        .nav-item.active {
-            color: #3b82f6;
-        }
-        
-        .nav-item:hover {
-            color: #3b82f6;
-        }
-        
-        .filter-chip {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-        
-        .filter-chip.active {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-        
-        .heart-btn {
-            transition: all 0.2s ease;
-        }
-        
-        .heart-btn.liked {
-            color: #ef4444;
-            transform: scale(1.1);
-        }
-        
-        .search-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 200;
-        }
-        
-        .search-overlay.active {
-            display: block;
-        }
-        
-        .settings-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 200;
-        }
-        
-        .settings-overlay.active {
-            display: block;
-        }
-    </style>
+    <script src="/script/tailwindcss.js"></script>
+    <script src="/script/tailwind-usage.js"></script>
+    <link rel="stylesheet" href="/style/main.css"></link>
 </head>
+
 <body class="bg-gray-50 pb-20">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Đang kiểm tra đăng nhập...</p>
+        </div>
+    </div>
+
     <!-- Header -->
     <div class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="px-4 py-3">
+        <div class="px-4 py-3 flex items-center justify-between">
             <h1 class="text-xl font-semibold text-gray-900">Gallery</h1>
+            <div class="flex items-center gap-3">
+                <span id="user-info" class="text-sm text-gray-600 hidden"></span>
+                <button id="logout-btn" class="text-sm text-red-600 hover:text-red-700 hidden">Đăng xuất</button>
+            </div>
         </div>
-        
+
         <!-- Filter Categories -->
         <div class="px-4 pb-3">
             <div class="flex gap-2 overflow-x-auto scrollbar-hide">
@@ -164,64 +49,66 @@
                 <svg viewBox="0 0 400 400" class="w-full h-full">
                     <defs>
                         <linearGradient id="nature1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#10b981"/>
-                            <stop offset="100%" style="stop-color:#059669"/>
+                            <stop offset="0%" style="stop-color:#10b981" />
+                            <stop offset="100%" style="stop-color:#059669" />
                         </linearGradient>
                     </defs>
-                    <rect width="400" height="400" fill="url(#nature1)"/>
-                    <circle cx="320" cy="80" r="40" fill="#fbbf24"/>
-                    <path d="M0 300 Q100 250 200 280 T400 270 L400 400 L0 400 Z" fill="#065f46"/>
-                    <path d="M0 320 Q150 280 300 300 L400 310 L400 400 L0 400 Z" fill="#047857"/>
+                    <rect width="400" height="400" fill="url(#nature1)" />
+                    <circle cx="320" cy="80" r="40" fill="#fbbf24" />
+                    <path d="M0 300 Q100 250 200 280 T400 270 L400 400 L0 400 Z" fill="#065f46" />
+                    <path d="M0 320 Q150 280 300 300 L400 310 L400 400 L0 400 Z" fill="#047857" />
                 </svg>
             </div>
-            
+
             <div class="image-item" data-category="food" data-id="2">
                 <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#fef3c7"/>
-                    <circle cx="200" cy="200" r="120" fill="#f59e0b"/>
-                    <circle cx="200" cy="200" r="100" fill="#d97706"/>
-                    <circle cx="200" cy="200" r="80" fill="#b45309"/>
-                    <rect x="180" y="60" width="40" height="80" fill="#065f46"/>
+                    <rect width="400" height="400" fill="#fef3c7" />
+                    <circle cx="200" cy="200" r="120" fill="#f59e0b" />
+                    <circle cx="200" cy="200" r="100" fill="#d97706" />
+                    <circle cx="200" cy="200" r="80" fill="#b45309" />
+                    <rect x="180" y="60" width="40" height="80" fill="#065f46" />
                 </svg>
             </div>
-            
+
             <div class="image-item" data-category="people" data-id="3">
                 <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#ddd6fe"/>
-                    <circle cx="200" cy="150" r="60" fill="#8b5cf6"/>
-                    <rect x="160" y="210" width="80" height="120" rx="10" fill="#7c3aed"/>
-                    <circle cx="180" cy="130" r="8" fill="#1f2937"/>
-                    <circle cx="220" cy="130" r="8" fill="#1f2937"/>
-                    <path d="M180 160 Q200 180 220 160" stroke="#1f2937" stroke-width="3" fill="none"/>
+                    <rect width="400" height="400" fill="#ddd6fe" />
+                    <circle cx="200" cy="150" r="60" fill="#8b5cf6" />
+                    <rect x="160" y="210" width="80" height="120" rx="10" fill="#7c3aed" />
+                    <circle cx="180" cy="130" r="8" fill="#1f2937" />
+                    <circle cx="220" cy="130" r="8" fill="#1f2937" />
+                    <path d="M180 160 Q200 180 220 160" stroke="#1f2937" stroke-width="3" fill="none" />
                 </svg>
             </div>
-            
+
             <div class="image-item" data-category="abstract" data-id="4">
                 <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#1e293b"/>
-                    <circle cx="100" cy="100" r="50" fill="#3b82f6" opacity="0.7"/>
-                    <circle cx="300" cy="150" r="70" fill="#ef4444" opacity="0.6"/>
-                    <circle cx="200" cy="300" r="60" fill="#10b981" opacity="0.8"/>
-                    <rect x="150" y="50" width="100" height="100" fill="#f59e0b" opacity="0.5" transform="rotate(45 200 100)"/>
+                    <rect width="400" height="400" fill="#1e293b" />
+                    <circle cx="100" cy="100" r="50" fill="#3b82f6" opacity="0.7" />
+                    <circle cx="300" cy="150" r="70" fill="#ef4444" opacity="0.6" />
+                    <circle cx="200" cy="300" r="60" fill="#10b981" opacity="0.8" />
+                    <rect x="150" y="50" width="100" height="100" fill="#f59e0b" opacity="0.5"
+                        transform="rotate(45 200 100)" />
                 </svg>
             </div>
-            
+
             <div class="image-item" data-category="nature" data-id="5">
                 <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#bfdbfe"/>
-                    <circle cx="200" cy="100" r="50" fill="#fbbf24"/>
-                    <path d="M0 200 Q100 150 200 180 T400 160 L400 400 L0 400 Z" fill="#3b82f6"/>
-                    <path d="M50 350 Q100 320 150 340 T250 330 Q300 325 350 340" stroke="#1e40af" stroke-width="4" fill="none"/>
+                    <rect width="400" height="400" fill="#bfdbfe" />
+                    <circle cx="200" cy="100" r="50" fill="#fbbf24" />
+                    <path d="M0 200 Q100 150 200 180 T400 160 L400 400 L0 400 Z" fill="#3b82f6" />
+                    <path d="M50 350 Q100 320 150 340 T250 330 Q300 325 350 340" stroke="#1e40af" stroke-width="4"
+                        fill="none" />
                 </svg>
             </div>
-            
+
             <div class="image-item" data-category="food" data-id="6">
                 <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#fecaca"/>
-                    <circle cx="200" cy="200" r="100" fill="#dc2626"/>
-                    <path d="M150 180 Q200 150 250 180 Q200 220 150 180" fill="#16a34a"/>
-                    <ellipse cx="180" cy="190" rx="8" ry="12" fill="#fbbf24"/>
-                    <ellipse cx="220" cy="190" rx="8" ry="12" fill="#fbbf24"/>
+                    <rect width="400" height="400" fill="#fecaca" />
+                    <circle cx="200" cy="200" r="100" fill="#dc2626" />
+                    <path d="M150 180 Q200 150 250 180 Q200 220 150 180" fill="#16a34a" />
+                    <ellipse cx="180" cy="190" rx="8" ry="12" fill="#fbbf24" />
+                    <ellipse cx="220" cy="190" rx="8" ry="12" fill="#fbbf24" />
                 </svg>
             </div>
         </div>
@@ -244,55 +131,16 @@
                 <button id="close-search" class="text-2xl">←</button>
                 <h2 class="text-xl font-semibold">Tìm kiếm</h2>
             </div>
-            
+
             <div class="relative mb-6">
-                <input type="text" id="search-input" placeholder="Tìm kiếm ảnh..." 
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="search-input" placeholder="Tìm kiếm ảnh..."
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <div class="absolute right-3 top-3 text-gray-400">🔍</div>
             </div>
-            
+
             <div class="text-center py-12 text-gray-500">
                 <div class="text-4xl mb-4">🔍</div>
                 <p>Nhập từ khóa để tìm kiếm ảnh</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Overlay -->
-    <div id="settings-overlay" class="settings-overlay">
-        <div class="p-4">
-            <div class="flex items-center gap-3 mb-6">
-                <button id="close-settings" class="text-2xl">←</button>
-                <h2 class="text-xl font-semibold">Cài đặt</h2>
-            </div>
-            
-            <div class="space-y-4">
-                <div class="bg-white rounded-lg p-4 shadow-sm">
-                    <h3 class="font-medium mb-2">Hiển thị</h3>
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-600">Lưới 2 cột</span>
-                        <input type="radio" name="grid" value="2" checked class="text-blue-600">
-                    </div>
-                    <div class="flex items-center justify-between mt-2">
-                        <span class="text-gray-600">Lưới 3 cột</span>
-                        <input type="radio" name="grid" value="3" class="text-blue-600">
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-lg p-4 shadow-sm">
-                    <h3 class="font-medium mb-2">Chất lượng ảnh</h3>
-                    <select class="w-full p-2 border border-gray-300 rounded-lg">
-                        <option>Cao (Tốn nhiều dữ liệu)</option>
-                        <option selected>Trung bình</option>
-                        <option>Thấp (Tiết kiệm dữ liệu)</option>
-                    </select>
-                </div>
-                
-                <div class="bg-white rounded-lg p-4 shadow-sm">
-                    <h3 class="font-medium mb-2">Về ứng dụng</h3>
-                    <p class="text-gray-600 text-sm">Photo Gallery v1.0</p>
-                    <p class="text-gray-600 text-sm">Ứng dụng xem ảnh đơn giản và hiện đại</p>
-                </div>
             </div>
         </div>
     </div>
@@ -309,12 +157,12 @@
                     <button id="download-btn" class="text-white text-2xl">⬇️</button>
                 </div>
             </div>
-            
+
             <!-- Modal Image -->
             <div class="flex-1 flex items-center justify-center p-4">
                 <div id="modal-image" class="max-w-full max-h-full"></div>
             </div>
-            
+
             <!-- Modal Footer -->
             <div class="p-4 bg-black bg-opacity-50 text-white">
                 <h3 id="modal-title" class="font-semibold text-lg mb-1"></h3>
@@ -345,8 +193,51 @@
             </div>
         </div>
     </div>
+    <!-- Firebase Authentication Check -->
+    <script type="module">
+        import { app, auth, analytics } from "/script/function/firebase/firebase-object.js";
+        import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-    <script>
+
+
+        // UI Elements
+        const loadingScreen = document.getElementById('loading-screen');
+        const userInfo = document.getElementById('user-info');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // Check authentication state
+        auth.onAuthStateChanged(function (user) {
+            if (user) {
+                // User is signed in
+                console.log('User is signed in:', user.email);
+
+                // Show user info
+                userInfo.textContent = `Xin chào, ${user.displayName || user.email}`;
+                userInfo.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+
+                // Hide loading screen
+                loadingScreen.classList.add('hidden');
+
+            } else {
+                // User is not signed in, redirect to login
+                console.log('User is not signed in, redirecting to login');
+                window.location.href = '/views/login.html';
+            }
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', async function () {
+            try {
+                await signOut(auth);
+                console.log('User signed out');
+                // Redirect to login page
+                window.location.href = '/views/login.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+            }
+        });
+
         // Sample image data
         const imageData = {
             1: { title: "Phong cảnh núi non", description: "Cảnh đẹp thiên nhiên hùng vĩ", date: "2 giờ trước", category: "nature" },
@@ -357,6 +248,8 @@
             6: { title: "Trái cây tươi", description: "Táo đỏ tươi ngon", date: "1 tuần trước", category: "food" }
         };
 
+
+
         let favorites = new Set();
         let currentView = 'gallery';
 
@@ -365,7 +258,7 @@
             item.addEventListener('click', () => {
                 const view = item.dataset.view;
                 switchView(view);
-                
+
                 // Update active nav item
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 item.classList.add('active');
@@ -374,15 +267,14 @@
 
         function switchView(view) {
             currentView = view;
-            
+
             // Hide all views
             document.getElementById('gallery-view').classList.add('hidden');
             document.getElementById('favorites-view').classList.add('hidden');
             document.getElementById('search-overlay').classList.remove('active');
-            document.getElementById('settings-overlay').classList.remove('active');
-            
+
             // Show selected view
-            switch(view) {
+            switch (view) {
                 case 'gallery':
                     document.getElementById('gallery-view').classList.remove('hidden');
                     break;
@@ -394,7 +286,7 @@
                     document.getElementById('search-overlay').classList.add('active');
                     break;
                 case 'settings':
-                    document.getElementById('settings-overlay').classList.add('active');
+                    location.href = "/views/setting.html";
                     break;
             }
         }
@@ -404,7 +296,7 @@
             chip.addEventListener('click', () => {
                 document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
-                
+
                 const category = chip.dataset.category;
                 filterImages(category);
             });
@@ -432,12 +324,12 @@
         function openModal(imageId, imageSvg) {
             const modal = document.getElementById('image-modal');
             const data = imageData[imageId];
-            
+
             document.getElementById('modal-image').innerHTML = imageSvg;
             document.getElementById('modal-title').textContent = data.title;
             document.getElementById('modal-description').textContent = data.description;
             document.getElementById('modal-date').textContent = data.date;
-            
+
             // Update favorite button
             const favoriteBtn = document.getElementById('favorite-btn');
             if (favorites.has(imageId)) {
@@ -447,15 +339,15 @@
                 favoriteBtn.textContent = '🤍';
                 favoriteBtn.classList.remove('liked');
             }
-            
+
             favoriteBtn.onclick = () => toggleFavorite(imageId);
-            
+
             modal.classList.add('active');
         }
 
         function toggleFavorite(imageId) {
             const favoriteBtn = document.getElementById('favorite-btn');
-            
+
             if (favorites.has(imageId)) {
                 favorites.delete(imageId);
                 favoriteBtn.textContent = '🤍';
@@ -470,14 +362,14 @@
         function updateFavoritesView() {
             const favoritesGrid = document.getElementById('favorites-grid');
             const emptyState = document.querySelector('#favorites-view .text-center');
-            
+
             if (favorites.size === 0) {
                 emptyState.style.display = 'block';
                 favoritesGrid.innerHTML = '';
             } else {
                 emptyState.style.display = 'none';
                 favoritesGrid.innerHTML = '';
-                
+
                 favorites.forEach(imageId => {
                     const originalItem = document.querySelector(`[data-id="${imageId}"]`);
                     const clonedItem = originalItem.cloneNode(true);
@@ -517,12 +409,6 @@
             document.querySelector('[data-view="gallery"]').classList.add('active');
         });
 
-        document.getElementById('close-settings').addEventListener('click', () => {
-            switchView('gallery');
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            document.querySelector('[data-view="gallery"]').classList.add('active');
-        });
-
         // Grid layout change
         document.querySelectorAll('input[name="grid"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
@@ -546,5 +432,7 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9671b28b434d3e36',t:'MTc1Mzg0NTM4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <script src="/script/min.js"></script>
+</body>
+
 </html>
