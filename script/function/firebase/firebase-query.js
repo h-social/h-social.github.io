@@ -1,14 +1,34 @@
 import { getFirestore, collection, getDocs, query, orderBy, addDoc, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 
 export class FirebaseQuery {
-    constructor(firebase) {
-        this.app = firebase.getApp()
-        this.db = getFirestore(this.app);
+    constructor(app) {
+        this.app = app
+        this.db = getFirestore(this.app);        
     }
-    setDoc = async(collectionName, name, value) =>{
+    
+    static async create(app) {
+        const instance = new FirebaseQuery(app);
+        await instance.init();
+        return instance;
+    }
+    
+    async init(){
+        this.user = await this.getCurrentUser();
+    }
+    getCurrentUser() {
+        return new Promise((resolve, reject) => {
+          const auth = getAuth(this.app);
+          const unsubscribe = onAuthStateChanged(auth, (user) => {
+            unsubscribe(); // tránh gọi lại nhiều lần
+            resolve(user);
+          }, reject);
+        });
+    }
+    set = async(collectionName, name, value) =>{
         try {
-            const docRef = await addDoc(collection(this.db, collectionName), {
+            const docRef = await addDoc(collection(this.db, collectionName, this.user.uid, "tokens"), {
                 name: name,
                 value: value,
                 createdAt: serverTimestamp()  // lưu timestamp chuẩn của Firestore
@@ -20,13 +40,12 @@ export class FirebaseQuery {
             throw error;
         }
     } 
-    getDoc = async(collectionName, name) =>{
+    get = async(collectionName, name) =>{
         try {
             // Tạo truy vấn với điều kiện name
             const q = query(
-                collection(this.db, collectionName), 
-                where("name", "==", name),
-                orderBy("createdAt", "desc")
+                collection(this.db, collectionName, this.user.uid, "tokens"), 
+                where("name", "==", name)
             );
     
             // Lấy dữ liệu

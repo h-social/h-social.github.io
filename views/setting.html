@@ -210,12 +210,15 @@
         import { Firebase } from "/script/function/Firebase.js";
         import { FirebaseQuery } from "/script/function/firebase/firebase-query.js";
         const firebase = new Firebase();
-        const query = new FirebaseQuery(firebase);
+        const app = firebase.getApp();
+        const query = await FirebaseQuery.create(app);
+
+        
         const onInit = async () =>{
-            const value = await query.getDoc("SettingToken", "github")
+            const value = await query.get("SettingToken", "github")
             console.log(value)
             const input = document.getElementById("githubToken");
-            input.value(value)
+            input.value = value
         }
         onInit();
         // Toggle password visibility
@@ -321,7 +324,8 @@
                     const tokenInput = this.closest('.bg-white').querySelector('input[type="password"], input[type="text"]');
                     const strValue = tokenInput.value.trim();
                     if (strValue) {
-                        await query.setDoc("SettingToken", "github", strValue)
+                        debugger;
+                        await query.set("SettingToken", "github", strValue)
                         alert('Demo: Token saved successfully!');
                     } else {
                         alert('Please enter a token first.');
