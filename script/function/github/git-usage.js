@@ -17,50 +17,6 @@ export class GitMain {
         this.api = new GithubAPI(token);
     }
 
-    
-    render() {
-        const contentHtml = `
-            <div class="gallery-section">
-                <div class="gallery-header">
-                    <div class="gallery-controls">
-                        <div class="folder-filter">
-                            <label for="galleryFolderSelect">Filter by Folder:</label>
-                            <select id="galleryFolderSelect">
-                                <option value="">All Folders</option>
-                            </select>
-                        </div>
-                        <div class="view-controls">
-                            <button class="btn btn-secondary" id="refreshBtn">
-                                <i class="fas fa-sync-alt"></i> Refresh
-                            </button>
-                            <button class="btn btn-secondary" id="favoritesBtn">
-                                <i class="fas fa-heart"></i> Favorites
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-content" id="galleryContent">
-                </div>
-                <div class="gallery-pagination" id="galleryPagination" style="display: none;">
-                    <button class="btn btn-primary" id="showMoreBtn">
-                        Show More Images
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-
-    bindEvents() {
-        const folderSelect = this.container.querySelector('#galleryFolderSelect');
-        const refreshBtn = this.container.querySelector('#refreshBtn');
-        const favoritesBtn = this.container.querySelector('#favoritesBtn');
-        const showMoreBtn = this.container.querySelector('#showMoreBtn');
-
-        folderSelect.addEventListener('change', this.handleFolderFilter.bind(this));
-        refreshBtn.addEventListener('click', this.loadImages.bind(this));
-        favoritesBtn.addEventListener('click', this.toggleFavoritesView.bind(this));
-        showMoreBtn.addEventListener('click', this.loadMoreImages.bind(this));
-    }
 
     async loadImages() {
         if (this.isLoading) return;
@@ -111,7 +67,7 @@ export class GitMain {
         const endIndex = this.currentPage * CONFIG.GALLERY_PAGE_SIZE;
         const imagesToShow = this.filteredImages.slice(startIndex, endIndex);
         if (imagesToShow.length === 0) {
-            container.querySelector('#galleryContent').innerHTML = `
+            container.querySelector('#image-grid').innerHTML = `
                 <div class="no-images">
                     <i class="fas fa-images"></i>
                     <p>No images found</p>
@@ -121,41 +77,17 @@ export class GitMain {
             return;
         }
         
-        container.querySelector('#galleryContent').innerHTML = imagesToShow.map(image => this.createImageCard(image)).join('');
+        container.querySelector('#image-grid').innerHTML = imagesToShow.map(image => this.createImageCard(image)).join('');
         this.showPagination();
     }
 
     createImageCard(image) {
         const isFavorite = (window.favoritesManager && window.favoritesManager.isFavorite(image.url)) || false;
         const urlImage = image.html_url.replace('/blob/','/refs/heads/').replace('https://github.com/','https://raw.githubusercontent.com/')
-
+        const previewImage = `https://images.weserv.nl/?url=${urlImage.replace('https://','')}&w=400`
         return `
-            <div class="image-card" data-url="${image.url}" data-name="${image.name}">
-                <div class="image-container">
-                    <img src="${urlImage}" alt="${image.name}" loading="lazy">
-                    <div class="image-overlay">
-                        <div class="image-actions">
-                            <button class="btn btn-sm btn-primary" onclick="app.components.galleryManager.previewImage('${image.url}', '${image.name}')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn btn-sm btn-secondary" onclick="app.components.galleryManager.downloadImage('${image.url}', '${image.name}')">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline'}" 
-                                    onclick="app.components.galleryManager.toggleFavorite('${image.url}', '${image.name}')">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="app.components.galleryManager.deleteImage('${image.path}', '${image.name}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="image-info">
-                    <span class="image-name">${image.name}</span>
-                    <span class="image-size">${Utils.formatFileSize(image.size)}</span>
-                    ${image.folder ? `<span class="image-folder">${image.folder}</span>` : ''}
-                </div>
+            <div class="image-item" data-category="food" data-id="6" data-url="${image.url}" data-name="${image.name}">
+                <img src="${previewImage}" alt="${image.name}" loading="lazy" class="w-full h-full">
             </div>
         `;
     }
