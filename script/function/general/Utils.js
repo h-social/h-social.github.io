@@ -1,5 +1,5 @@
 // Utility functions
-class Utils {
+export class Utils {
     // File utilities
     static formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';
@@ -118,9 +118,3 @@ class Utils {
     }
 }
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Utils;
-} else {
-    window.Utils = Utils;
-} 

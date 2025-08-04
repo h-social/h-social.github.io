@@ -18,6 +18,10 @@ export class Firebase {
         return app
     }
 
+    getAuthApp(){
+        return auth
+    }
+
     loginGoogle() {
         const provider = new auth.GoogleAuthProvider();
         auth.signInWithPopup(provider)

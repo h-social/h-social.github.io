@@ -11,8 +11,17 @@
     <script src="/script/tailwindcss.js"></script>
     <script src="/script/tailwind-usage.js"></script>
     <link rel="stylesheet" href="/style/main.css"></link>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 </head>
+<style>
+    h1.text-xl.font-semibold.text-gray-900 {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        gap: 10px;
+    }
 
+</style>
 <body class="bg-gray-50 pb-20">
     <!-- Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 bg-white flex items-center justify-center z-50">
@@ -25,7 +34,10 @@
     <!-- Header -->
     <div class="bg-white shadow-sm sticky top-0 z-50">
         <div class="px-4 py-3 flex items-center justify-between">
-            <h1 class="text-xl font-semibold text-gray-900">Gallery</h1>
+            <h1 class="text-xl font-semibold text-gray-900">
+                <img src="/icons/logo.png" alt="logo" class="w-10 h-10">
+                Gallery
+            </h1>
             <div class="flex items-center gap-3">
                 <span id="user-info" class="text-sm text-gray-600 hidden"></span>
                 <button id="logout-btn" class="text-sm text-red-600 hover:text-red-700 hidden">Đăng xuất</button>
@@ -33,13 +45,18 @@
         </div>
 
         <!-- Filter Categories -->
-        <div class="px-4 pb-3">
-            <div class="flex gap-2 overflow-x-auto scrollbar-hide">
-                <div class="filter-chip active" data-category="all">Tất cả</div>
-                <div class="filter-chip" data-category="nature">Thiên nhiên</div>
-                <div class="filter-chip" data-category="food">Ẩm thực</div>
-                <div class="filter-chip" data-category="people">Con người</div>
-                <div class="filter-chip" data-category="abstract">Trừu tượng</div>
+        <div class="px-4 py-4" style="
+            padding-bottom: 0;
+        ">
+            <!-- Slider main container -->
+            <div class="swiper" >
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper" id="category-list">
+                <!-- Slides -->
+                    
+                </div>
+                <!-- If we need pagination -->
+                <div class="swiper-pagination"></div>
             </div>
         </div>
     </div>
@@ -48,104 +65,19 @@
     <div id="gallery-view" class="px-4 py-4">
         <div class="image-grid" id="image-grid">
             <!-- Sample Images -->
-            <div class="image-item" data-category="nature" data-id="1">
-                <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <defs>
-                        <linearGradient id="nature1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#10b981" />
-                            <stop offset="100%" style="stop-color:#059669" />
-                        </linearGradient>
-                    </defs>
-                    <rect width="400" height="400" fill="url(#nature1)" />
-                    <circle cx="320" cy="80" r="40" fill="#fbbf24" />
-                    <path d="M0 300 Q100 250 200 280 T400 270 L400 400 L0 400 Z" fill="#065f46" />
-                    <path d="M0 320 Q150 280 300 300 L400 310 L400 400 L0 400 Z" fill="#047857" />
-                </svg>
-            </div>
 
-            <div class="image-item" data-category="food" data-id="2">
-                <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#fef3c7" />
-                    <circle cx="200" cy="200" r="120" fill="#f59e0b" />
-                    <circle cx="200" cy="200" r="100" fill="#d97706" />
-                    <circle cx="200" cy="200" r="80" fill="#b45309" />
-                    <rect x="180" y="60" width="40" height="80" fill="#065f46" />
-                </svg>
-            </div>
 
-            <div class="image-item" data-category="people" data-id="3">
-                <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#ddd6fe" />
-                    <circle cx="200" cy="150" r="60" fill="#8b5cf6" />
-                    <rect x="160" y="210" width="80" height="120" rx="10" fill="#7c3aed" />
-                    <circle cx="180" cy="130" r="8" fill="#1f2937" />
-                    <circle cx="220" cy="130" r="8" fill="#1f2937" />
-                    <path d="M180 160 Q200 180 220 160" stroke="#1f2937" stroke-width="3" fill="none" />
-                </svg>
-            </div>
-
-            <div class="image-item" data-category="abstract" data-id="4">
-                <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#1e293b" />
-                    <circle cx="100" cy="100" r="50" fill="#3b82f6" opacity="0.7" />
-                    <circle cx="300" cy="150" r="70" fill="#ef4444" opacity="0.6" />
-                    <circle cx="200" cy="300" r="60" fill="#10b981" opacity="0.8" />
-                    <rect x="150" y="50" width="100" height="100" fill="#f59e0b" opacity="0.5"
-                        transform="rotate(45 200 100)" />
-                </svg>
-            </div>
-
-            <div class="image-item" data-category="nature" data-id="5">
-                <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#bfdbfe" />
-                    <circle cx="200" cy="100" r="50" fill="#fbbf24" />
-                    <path d="M0 200 Q100 150 200 180 T400 160 L400 400 L0 400 Z" fill="#3b82f6" />
-                    <path d="M50 350 Q100 320 150 340 T250 330 Q300 325 350 340" stroke="#1e40af" stroke-width="4"
-                        fill="none" />
-                </svg>
-            </div>
-
-            <div class="image-item" data-category="food" data-id="6">
-                <svg viewBox="0 0 400 400" class="w-full h-full">
-                    <rect width="400" height="400" fill="#fecaca" />
-                    <circle cx="200" cy="200" r="100" fill="#dc2626" />
-                    <path d="M150 180 Q200 150 250 180 Q200 220 150 180" fill="#16a34a" />
-                    <ellipse cx="180" cy="190" rx="8" ry="12" fill="#fbbf24" />
-                    <ellipse cx="220" cy="190" rx="8" ry="12" fill="#fbbf24" />
-                </svg>
-            </div>
         </div>
     </div>
 
     <!-- Favorites View -->
     <div id="favorites-view" class="px-4 py-4 hidden">
-        <div class="text-center py-12">
-            <div class="text-6xl mb-4">❤️</div>
-            <h2 class="text-xl font-semibold text-gray-900 mb-2">Chưa có ảnh yêu thích</h2>
-            <p class="text-gray-600">Nhấn vào biểu tượng trái tim để thêm ảnh vào danh sách yêu thích</p>
-        </div>
-        <div class="image-grid" id="favorites-grid"></div>
+       
     </div>
 
     <!-- Search Overlay -->
     <div id="search-overlay" class="search-overlay">
-        <div class="p-4">
-            <div class="flex items-center gap-3 mb-6">
-                <button id="close-search" class="text-2xl">←</button>
-                <h2 class="text-xl font-semibold">Tìm kiếm</h2>
-            </div>
-
-            <div class="relative mb-6">
-                <input type="text" id="search-input" placeholder="Tìm kiếm ảnh..."
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <div class="absolute right-3 top-3 text-gray-400">🔍</div>
-            </div>
-
-            <div class="text-center py-12 text-gray-500">
-                <div class="text-4xl mb-4">🔍</div>
-                <p>Nhập từ khóa để tìm kiếm ảnh</p>
-            </div>
-        </div>
+        
     </div>
 
     <!-- Image Modal -->
@@ -195,27 +127,36 @@
                 <span class="text-xs">Cài đặt</span>
             </div>
         </div>
-    </div>
+    </div>    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="/script/min.js"></script>
+
     <!-- Firebase Authentication Check -->
     <script type="module">
-        import { app, auth, analytics } from "/script/function/firebase/firebase-object.js";
+        import { Firebase } from "/script/function/Firebase.js";
         import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-
+        const firebase = new Firebase();
+        const auth = firebase.getAuthApp();
+        const app = firebase.getApp();
 
         // UI Elements
         const loadingScreen = document.getElementById('loading-screen');
         const userInfo = document.getElementById('user-info');
         const logoutBtn = document.getElementById('logout-btn');
 
+        import { main } from "/main.js";
+
+        const mainObj = new main();
+
         // Check authentication state
         auth.onAuthStateChanged(function (user) {
             if (user) {
                 // User is signed in
-                console.log('User is signed in:', user.email);
+                console.log('User is signed in:', user);
 
                 // Show user info
-                userInfo.textContent = `Xin chào, ${user.displayName || user.email}`;
+                userInfo.textContent = `Xin chào`;
                 userInfo.classList.remove('hidden');
                 logoutBtn.classList.remove('hidden');
 
@@ -232,7 +173,7 @@
         // Logout functionality
         logoutBtn.addEventListener('click', async function () {
             try {
-                await signOut(auth);
+                await firebase.signOut();
                 console.log('User signed out');
                 // Redirect to login page
                 window.location.href = '/views/login.html';
@@ -314,38 +255,6 @@
                     img.style.display = 'none';
                 }
             });
-        }
-
-        // Image modal handling
-        document.querySelectorAll('.image-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const imageId = item.dataset.id;
-                openModal(imageId, item.querySelector('svg').outerHTML);
-            });
-        });
-
-        function openModal(imageId, imageSvg) {
-            const modal = document.getElementById('image-modal');
-            const data = imageData[imageId];
-
-            document.getElementById('modal-image').innerHTML = imageSvg;
-            document.getElementById('modal-title').textContent = data.title;
-            document.getElementById('modal-description').textContent = data.description;
-            document.getElementById('modal-date').textContent = data.date;
-
-            // Update favorite button
-            const favoriteBtn = document.getElementById('favorite-btn');
-            if (favorites.has(imageId)) {
-                favoriteBtn.textContent = '❤️';
-                favoriteBtn.classList.add('liked');
-            } else {
-                favoriteBtn.textContent = '🤍';
-                favoriteBtn.classList.remove('liked');
-            }
-
-            favoriteBtn.onclick = () => toggleFavorite(imageId);
-
-            modal.classList.add('active');
         }
 
         function toggleFavorite(imageId) {
@@ -434,8 +343,22 @@
                 document.getElementById('image-modal').classList.remove('active');
             }
         });
+
+        import { GitMain } from "/script/function/github/git-usage.js";
+        const gitMain = await GitMain.create(app);
+        gitMain.render();
+
+        $('body').on('click', '.more-btn', function(){
+            gitMain.loadMoreImages()
+        })
+        $('body').on('click', '.swiper-slide', function(){
+            const category = $(this).attr('data-category')
+            $('.swiper-slide.selected').removeClass('selected');
+            $(this).addClass('selected');
+            gitMain.loadCategory(category)
+        })
+         
     </script>
-    <script src="/script/min.js"></script>
 </body>
 
 </html>
