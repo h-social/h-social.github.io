@@ -53,7 +53,7 @@ export class TikTokViewer {
 
     renderSlide(item, index) {
         const urlImage = item.imagePath.replace('/blob/', '/refs/heads/').replace('https://github.com/', 'https://raw.githubusercontent.com/')
-        const previewImage = `https://images.weserv.nl/?url=${urlImage.replace('https://', '')}&w=800`
+        const previewImage = `https://images.weserv.nl/?url=${urlImage.replace('https://', '')}&w=400`
         return `
             <div class="swiper-slide model relative h-full">
                 <div class="w-full h-full flex items-center justify-center">
