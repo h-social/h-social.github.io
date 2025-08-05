@@ -3,32 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Gallery - Login</title>
+    <title>Photo Gallery - Sign Up</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/script/tailwindcss.js"></script>
     <script src="/script/tailwind-usage.js"></script>
-
 </head>
-<style>
-    .text-center .mb-4 {
-        display: flex;
-        justify-content: center;
-    }
-</style>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
         <!-- Header -->
         <div class="text-center mb-8">
             <div class="mb-4">
-                <img src="/icons/logo.png" alt="logo" class="w-20 h-20">
+                <i class="fas fa-camera-retro text-5xl text-primary mb-4"></i>
             </div>
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome to Photo Gallery</h1>
-            <p class="text-gray-600 text-sm">Sign in to view and manage your favorite photos.</p>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Join Photo Gallery</h1>
+            <p class="text-gray-600 text-sm">Create an account to start sharing your photos.</p>
         </div>
 
-        <!-- Login Form -->
+        <!-- Sign Up Form -->
         <div class="bg-white rounded-2xl shadow-lg p-8">
-            <form id="loginForm" class="space-y-6">
+            <form id="signupForm" class="space-y-6">
+                <!-- Name Input -->
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fas fa-user text-gray-400"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="displayName"
+                        placeholder="Full name"
+                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200"
+                        required
+                    >
+                </div>
+
                 <!-- Email Input -->
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -38,7 +45,6 @@
                         type="email" 
                         id="email"
                         placeholder="Email address"
-                        value="nhunghien@3009.com"
                         class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200"
                         required
                     >
@@ -52,41 +58,49 @@
                     <input 
                         type="password" 
                         id="password"
-                        value="123456"
-                        placeholder="Password"
+                        placeholder="Password (min 6 characters)"
                         class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200"
                         required
+                        minlength="6"
                     >
                 </div>
 
-                <!-- Login Button -->
+                <!-- Confirm Password Input -->
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-gray-400"></i>
+                    </div>
+                    <input 
+                        type="password" 
+                        id="confirmPassword"
+                        placeholder="Confirm password"
+                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200"
+                        required
+                        minlength="6"
+                    >
+                </div>
+
+                <!-- Sign Up Button -->
                 <button 
                     type="submit"
-                    id="loginBtn"
+                    id="signupBtn"
                     class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center space-x-2"
                 >
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Login</span>
+                    <i class="fas fa-user-plus"></i>
+                    <span>Create Account</span>
                 </button>
-
-                <!-- Forgot Password -->
-                <div class="text-center">
-                    <a href="#" class="text-sm text-primary hover:text-primary-dark transition-colors duration-200">
-                        Forgot password?
-                    </a>
-                </div>
             </form>
 
             <!-- Divider -->
             <div class="my-8 flex items-center">
                 <div class="flex-1 border-t border-gray-300"></div>
-                <span class="px-4 text-sm text-gray-500">or sign in with</span>
+                <span class="px-4 text-sm text-gray-500">or sign up with</span>
                 <div class="flex-1 border-t border-gray-300"></div>
             </div>
 
-            <!-- Social Login Buttons -->
+            <!-- Social Sign Up Buttons -->
             <div class="space-y-3">
-                <button id="googleLoginBtn" class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center space-x-2">
+                <button id="googleSignupBtn" class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-4 rounded-xl transition-colors duration-200 flex items-center justify-center space-x-2">
                     <i class="fab fa-google"></i>
                     <span>Continue with Google</span>
                 </button>
@@ -96,9 +110,9 @@
         <!-- Footer -->
         <div class="text-center mt-8">
             <p class="text-gray-600 text-sm">
-                Don't have an account? 
-                <a href="#" id="signUpLink" class="text-primary hover:text-primary-dark font-medium transition-colors duration-200">
-                    Sign up
+                Already have an account? 
+                <a href="/views/login.html" class="text-primary hover:text-primary-dark font-medium transition-colors duration-200">
+                    Sign in
                 </a>
             </p>
         </div>
@@ -108,23 +122,25 @@
     <div id="loadingSpinner" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
             <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-            <span class="text-gray-700">Loading...</span>
+            <span class="text-gray-700">Creating account...</span>
         </div>
     </div>
 
     <!-- Firebase SDK -->
     <script type="module">
         import { app, auth, analytics } from "/script/function/firebase/firebase-object.js";
+        import { getFirestore} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
         import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-
         // UI Elements
-        const loginForm = document.getElementById('loginForm');
+        const db = getFirestore(app);
+        const signupForm = document.getElementById('signupForm');
+        const displayNameInput = document.getElementById('displayName');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        const loginBtn = document.getElementById('loginBtn');
-        const googleLoginBtn = document.getElementById('googleLoginBtn');
-        const signUpLink = document.getElementById('signUpLink');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const signupBtn = document.getElementById('signupBtn');
+        const googleSignupBtn = document.getElementById('googleSignupBtn');
         const loadingSpinner = document.getElementById('loadingSpinner');
 
         // Show/Hide loading spinner
@@ -150,109 +166,127 @@
             }, 3000);
         }
 
-        // Manual login with email/password
-        loginForm.addEventListener('submit', async function(e) {
+        // Validate password match
+        function validatePasswords() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match', false);
+                return false;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters long', false);
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Manual sign up with email/password
+        signupForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const displayName = displayNameInput.value.trim();
             const email = emailInput.value;
             const password = passwordInput.value;
             
-            if (!email || !password) {
+            if (!displayName || !email || !password) {
                 showMessage('Please fill in all fields', false);
                 return;
             }
 
+            if (!validatePasswords()) {
+                return;
+            }
+
             showLoading();
-            loginBtn.disabled = true;
+            signupBtn.disabled = true;
 
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                showMessage(`Welcome back, ${user.email}!`);
                 
-                // Redirect to main page after successful login
+                // Update user profile with display name
+                await updateProfile(user, {
+                    displayName: displayName
+                });
+                
+                showMessage(`Welcome, ${displayName}! Account created successfully.`);
+                
+                // Redirect to main page after successful signup
                 setTimeout(() => {
                     window.location.href = '/index.html';
                 }, 1500);
                 
             } catch (error) {
-                console.error('Login error:', error);
-                let errorMessage = 'Login failed. Please try again.';
+                console.error('Signup error:', error);
+                let errorMessage = 'Signup failed. Please try again.';
                 
                 switch (error.code) {
-                    case 'auth/user-not-found':
-                        errorMessage = 'No account found with this email.';
-                        break;
-                    case 'auth/wrong-password':
-                        errorMessage = 'Incorrect password.';
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'An account with this email already exists.';
                         break;
                     case 'auth/invalid-email':
                         errorMessage = 'Invalid email address.';
                         break;
-                    case 'auth/too-many-requests':
-                        errorMessage = 'Too many failed attempts. Please try again later.';
+                    case 'auth/weak-password':
+                        errorMessage = 'Password is too weak. Please choose a stronger password.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage = 'Email/password accounts are not enabled.';
                         break;
                 }
                 
                 showMessage(errorMessage, false);
             } finally {
                 hideLoading();
-                loginBtn.disabled = false;
+                signupBtn.disabled = false;
             }
         });
 
-        // Google login
-        googleLoginBtn.addEventListener('click', async function() {
+        // Google signup
+        googleSignupBtn.addEventListener('click', async function() {
             showLoading();
-            googleLoginBtn.disabled = true;
+            googleSignupBtn.disabled = true;
 
             try {
                 const provider = new GoogleAuthProvider();
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
                 
-                showMessage(`Welcome, ${user.displayName || user.email}!`);
+                showMessage(`Welcome, ${user.displayName || user.email}! Account created successfully.`);
                 
-                // Redirect to main page after successful login
+                // Redirect to main page after successful signup
                 setTimeout(() => {
                     window.location.href = '/index.html';
                 }, 1500);
                 
             } catch (error) {
-                console.error('Google login error:', error);
-                let errorMessage = 'Google login failed. Please try again.';
+                console.error('Google signup error:', error);
+                let errorMessage = 'Google signup failed. Please try again.';
                 
                 if (error.code === 'auth/popup-closed-by-user') {
-                    errorMessage = 'Login cancelled.';
+                    errorMessage = 'Signup cancelled.';
+                } else if (error.code === 'auth/account-exists-with-different-credential') {
+                    errorMessage = 'An account already exists with this email using a different sign-in method.';
                 }
                 
                 showMessage(errorMessage, false);
             } finally {
                 hideLoading();
-                googleLoginBtn.disabled = false;
+                googleSignupBtn.disabled = false;
             }
-        });
-
-        // Sign up link handler
-        signUpLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Redirect to signup page
-            window.location.href = '/views/signup.html';
-        });
-
-        // Forgot password handler
-        document.querySelector('a[href="#"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            showMessage('Password reset feature coming soon!', false);
         });
 
         // Check if user is already logged in
         auth.onAuthStateChanged(function(user) {
             if (user) {
-                // User is already signed in, redirect to gallery
+                // User is already signed in, redirect to main page
                 window.location.href = '/index.html';
             }
         });
     </script>
 </body>
-</html>
+</html> 

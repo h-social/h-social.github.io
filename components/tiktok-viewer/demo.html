@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Style Image Viewer Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Demo Controls -->
+    <div class="fixed top-4 left-4 z-50 bg-white p-4 rounded-lg shadow-lg">
+        <h3 class="text-lg font-semibold mb-2">TikTok Viewer Demo</h3>
+        <button id="open-viewer" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Mở TikTok Viewer
+        </button>
+        <button id="open-with-data" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ml-2">
+            Mở với dữ liệu mẫu
+        </button>
+        <button id="open-specific-image" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 ml-2">
+            Mở ảnh cụ thể
+        </button>
+    </div>
+
+    <!-- Container for TikTok Viewer -->
+    <div id="tiktok-viewer-container" class="fixed inset-0 z-40 hidden"></div>
+
+    <!-- Demo Content -->
+    <div class="container mx-auto px-4 py-20">
+        <h1 class="text-3xl font-bold text-center mb-8">TikTok Style Image Viewer</h1>
+        
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Tính năng chính:</h2>
+            <ul class="space-y-2 text-gray-700">
+                <li>✅ Vertical swipe navigation với Swiper.js</li>
+                <li>✅ Preload 5 ảnh tiếp theo để tối ưu performance</li>
+                <li>✅ Responsive design với TailwindCSS</li>
+                <li>✅ Keyboard navigation (Arrow keys, Escape)</li>
+                <li>✅ Touch/mouse wheel support</li>
+                <li>✅ Progress indicator</li>
+                <li>✅ Favorite, Share, Download buttons</li>
+                <li>✅ Smooth transitions và animations</li>
+            </ul>
+            
+            <div class="mt-6 p-4 bg-gray-50 rounded">
+                <h3 class="font-semibold mb-2">Cách sử dụng:</h3>
+                <pre class="text-sm text-gray-600 overflow-x-auto">
+// Import component
+import { TikTokViewer } from './components/tiktok-viewer/tiktok-viewer.js';
+
+// Dữ liệu mẫu
+const data = [
+    { name: "Image 1", imagePath: "/path/to/image1.jpg", favorite: false },
+    { name: "Image 2", imagePath: "/path/to/image2.jpg", favorite: true },
+    // ...
+];
+
+// Khởi tạo viewer
+const viewer = new TikTokViewer('container-id', data);
+
+// Lắng nghe events
+document.addEventListener('favoriteToggled', (e) => {
+    console.log('Favorite toggled:', e.detail);
+});
+
+document.addEventListener('viewerClosed', (e) => {
+    console.log('Viewer closed at index:', e.detail.currentIndex);
+});
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { TikTokViewer } from './tiktok-viewer.js';
+
+        // Sample data
+        const sampleData = [
+            {
+                name: "Phong cảnh núi non",
+                imagePath: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop",
+                favorite: false
+            },
+            {
+                name: "Biển xanh mênh mông",
+                imagePath: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=1200&fit=crop",
+                favorite: true
+            },
+            {
+                name: "Thành phố về đêm",
+                imagePath: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&h=1200&fit=crop",
+                favorite: false
+            },
+            {
+                name: "Rừng cây xanh",
+                imagePath: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop",
+                favorite: false
+            },
+            {
+                name: "Hoàng hôn đẹp",
+                imagePath: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop",
+                favorite: true
+            }
+        ];
+
+        let viewer = null;
+
+        // Open viewer with sample data
+        document.getElementById('open-with-data').addEventListener('click', () => {
+            const container = document.getElementById('tiktok-viewer-container');
+            container.classList.remove('hidden');
+            
+            viewer = new TikTokViewer('tiktok-viewer-container', sampleData);
+        });
+
+        // Open empty viewer
+        document.getElementById('open-viewer').addEventListener('click', () => {
+            const container = document.getElementById('tiktok-viewer-container');
+            container.classList.remove('hidden');
+            
+            viewer = new TikTokViewer('tiktok-viewer-container', []);
+        });
+
+        // Open viewer with specific image
+        document.getElementById('open-specific-image').addEventListener('click', () => {
+            const container = document.getElementById('tiktok-viewer-container');
+            container.classList.remove('hidden');
+            
+            // Mở viewer và hiển thị trực tiếp ảnh thứ 3
+            viewer = new TikTokViewer('tiktok-viewer-container', sampleData, {
+                startImagePath: sampleData[2].imagePath
+            });
+        });
+
+        // Listen to events
+        document.addEventListener('favoriteToggled', (e) => {
+            console.log('Favorite toggled:', e.detail);
+        });
+
+        document.addEventListener('viewerClosed', (e) => {
+            console.log('Viewer closed at index:', e.detail.currentIndex);
+            const container = document.getElementById('tiktok-viewer-container');
+            container.classList.add('hidden');
+        });
+    </script>
+</body>
+</html> 

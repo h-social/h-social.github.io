@@ -1,15 +1,21 @@
-// GitHub API Service
-class GitHubService {
-    constructor() {
-        this.token = null;
-        this.userInfo = null;
-        this.repository = CONFIG.DEFAULTS.REPOSITORY;
-        this.owner = CONFIG.DEFAULTS.OWNER;
-    }
+import { CONFIG } from "/config.js";
+import { Utils } from "/script/function/general/Utils.js";
 
-    // Initialize service
-    init(token) {
+export class GithubAPI {
+    constructor(token) {
         this.token = token;
+        this.baseUrl = CONFIG.GITHUB_API_BASE;
+        this.repository = CONFIG.DEFAULTS.REPOSITORY;
+        this.userInfo = null;
+        this.init();
+
+    }
+    static async create(token) {
+        const instance = new GithubAPI(token);
+        await instance.verifyToken();
+        return instance;
+    }
+    init() {
         return this.verifyToken();
     }
 
@@ -43,7 +49,47 @@ class GitHubService {
         }
     }
 
-    // Create repository if it doesn't exist
+    // Hàm chung để gọi API
+    async request(endpoint, method = "GET", body = null) {
+        const headers = {
+            "Authorization": `token ${this.token}`,
+            "Accept": "application/vnd.github+json"
+        };
+        if (body) headers["Content-Type"] = "application/json";
+
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+            method,
+            headers,
+            body: body ? JSON.stringify(body) : null
+        });
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`GitHub API error: ${response.status} - ${error}`);
+        }
+        return response.json();
+    }
+
+    // Lấy data (ví dụ: lấy thông tin user)
+    async getUser() {
+        return this.request("/user");
+    }
+
+    // Lưu data (ví dụ: cập nhật bio user)
+    async updateUserBio(newBio) {
+        return this.request("/user", "PATCH", { bio: newBio });
+    }
+
+    // Lấy repo
+    async getRepos() {
+        return this.request("/user/repos");
+    }
+
+    // Tạo repo mới
+    async createRepo(repoData) {
+        return this.request("/user/repos", "POST", repoData);
+    }
+
     async createRepositoryIfNeeded() {
         try {
             const response = await fetch(`${CONFIG.GITHUB_API_BASE}/repos/${this.owner}/${this.repository}`, {
@@ -84,34 +130,6 @@ class GitHubService {
         }
     }
 
-    // Create folder by uploading .gitkeep file
-    async createFolder(folderPath) {
-        try {
-            const content = btoa(''); // Empty content for .gitkeep
-            const message = `Create folder: ${folderPath}`;
-            
-            const response = await fetch(`${CONFIG.GITHUB_API_BASE}/repos/${this.owner}/${this.repository}/contents/${folderPath}/.gitkeep`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${this.token}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: message,
-                    content: content
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to create folder: ${folderPath}`);
-            }
-
-            return { success: true };
-        } catch (error) {
-            return Utils.handleError(error, 'GitHubService.createFolder');
-        }
-    }
     processImages(contents) {
         return contents
             .filter(item => this.isImageFile(item));
@@ -122,7 +140,7 @@ class GitHubService {
         const fileName = item.name.toLowerCase();
         return imageExtensions.some(ext => fileName.endsWith(ext));
     }
-    // Get folder contents
+
     async getFolderContents(folderPath = '') {
         try {
             const response = await fetch(`${CONFIG.GITHUB_API_BASE}/repos/${this.owner}/${this.repository}/contents/${folderPath}`, {
@@ -240,24 +258,4 @@ class GitHubService {
             return Utils.handleError(error, 'GitHubService.deleteFile');
         }
     }
-
-    // Get user info
-    getUserInfo() {
-        return this.userInfo;
-    }
-
-    // Get repository info
-    getRepositoryInfo() {
-        return {
-            owner: this.owner,
-            repository: this.repository
-        };
-    }
 }
-
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = GitHubService;
-} else {
-    window.GitHubService = GitHubService;
-} 
