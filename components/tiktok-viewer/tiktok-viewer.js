@@ -84,12 +84,6 @@ export class TikTokViewer {
                         </div>
                     </div>
                 </div>
-                
-                <!-- Swipe Hint -->
-                <div class="absolute top-1/2 right-4 transform -translate-y-1/2 text-white text-center opacity-60">
-                    <div class="text-sm mb-2">Swipe up</div>
-                    <div class="text-2xl">⬆️</div>
-                </div>
             </div>
         `;
     }
@@ -164,12 +158,10 @@ export class TikTokViewer {
 
     onSlideChange() {
         this.currentIndex = this.swiper.activeIndex;
-        this.updateProgressDots();
         this.preloadNextImages();
     }
 
     onInit() {
-        this.updateProgressDots();
         this.preloadNextImages();
     }
 
@@ -184,20 +176,8 @@ export class TikTokViewer {
                 if (this.swiper) {
                     this.swiper.slideTo(startIndex);
                 }
-                this.updateProgressDots();
             }
         }
-    }
-
-    updateProgressDots() {
-        const dots = document.querySelectorAll('.progress-dot');
-        dots.forEach((dot, index) => {
-            if (index === this.currentIndex) {
-                dot.classList.add('bg-opacity-100');
-            } else {
-                dot.classList.remove('bg-opacity-100');
-            }
-        });
     }
 
     preloadNextImages() {
