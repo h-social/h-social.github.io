@@ -63,7 +63,7 @@ export class TikTokViewer {
             <div class="swiper-slide model relative h-full">
                 <div class="w-full h-full flex items-center justify-center">
                     <img 
-                        src="${previewImage}" 
+                        src="${urlImage}" 
                         alt="${item.name}"
                         class="w-full h-full object-cover"
                         loading="${index < 5 ? 'eager' : 'lazy'}"
@@ -83,7 +83,7 @@ export class TikTokViewer {
                             <button class="share-btn text-white text-2xl transition-transform hover:scale-110">
                                 📤
                             </button>
-                            <button href="${urlImage}" class="download-btn text-white text-2xl transition-transform hover:scale-110">
+                            <button href="${item.imageDownload}" class="download-btn text-white text-2xl transition-transform hover:scale-110">
                                 ⬇️
                             </button>
                         </div>
