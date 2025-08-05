@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Viewer Demo</title>
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/style/tiktok-viewer.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">TikTok Style Image Viewer Demo</h1>
+        
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Test Component</h2>
+            <p class="text-gray-600 mb-4">Click the buttons below to test different features</p>
+            
+            <div class="space-y-3">
+                <button id="open-viewer" class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors">
+                    🎬 Mở TikTok Viewer
+                </button>
+                
+                <button id="open-specific" class="w-full bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-colors">
+                    🎯 Mở ảnh cụ thể (ảnh thứ 3)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TikTok Viewer Container -->
+    <div id="tiktok-viewer-container" class="fixed inset-0 z-50 hidden"></div>
+
+    <script type="module">
+        import { TikTokViewer } from './components/tiktok-viewer/tiktok-viewer.js';
+
+        // Sample data
+        const sampleData = [
+            {
+                name: "Phong cảnh núi non",
+                imagePath: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop",
+                favorite: false
+            },
+            {
+                name: "Biển xanh mênh mông",
+                imagePath: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=1200&fit=crop",
+                favorite: true
+            },
+            {
+                name: "Thành phố về đêm",
+                imagePath: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&h=1200&fit=crop",
+                favorite: false
+            },
+            {
+                name: "Rừng cây xanh",
+                imagePath: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=1200&fit=crop",
+                favorite: false
+            },
+            {
+                name: "Hoàng hôn đẹp",
+                imagePath: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1200&fit=crop",
+                favorite: true
+            }
+        ];
+
+        let viewer = null;
+
+        // Open viewer
+        document.getElementById('open-viewer').addEventListener('click', () => {
+            const container = document.getElementById('tiktok-viewer-container');
+            container.classList.remove('hidden');
+            document.body.classList.add('viewer-open');
+            
+            viewer = new TikTokViewer('tiktok-viewer-container', sampleData);
+        });
+
+        // Open viewer with specific image
+        document.getElementById('open-specific').addEventListener('click', () => {
+            const container = document.getElementById('tiktok-viewer-container');
+            container.classList.remove('hidden');
+            document.body.classList.add('viewer-open');
+            
+            // Mở viewer và hiển thị trực tiếp ảnh thứ 3
+            viewer = new TikTokViewer('tiktok-viewer-container', sampleData, {
+                startImagePath: sampleData[2].imagePath
+            });
+        });
+
+        // Listen to events
+        document.addEventListener('favoriteToggled', (e) => {
+            console.log('Favorite toggled:', e.detail);
+        });
+
+        document.addEventListener('viewerClosed', (e) => {
+            console.log('Viewer closed at index:', e.detail.currentIndex);
+            const container = document.getElementById('tiktok-viewer-container');
+            container.classList.add('hidden');
+            document.body.classList.remove('viewer-open');
+        });
+    </script>
+</body>
+</html> 

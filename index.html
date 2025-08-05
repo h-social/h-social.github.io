@@ -11,6 +11,7 @@
     <script src="/script/tailwindcss.js"></script>
     <script src="/script/tailwind-usage.js"></script>
     <link rel="stylesheet" href="/style/main.css"></link>
+    <link rel="stylesheet" href="/style/tiktok-viewer.css"></link>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 </head>
 <style>
@@ -82,30 +83,11 @@
 
     <!-- Image Modal -->
     <div id="image-modal" class="modal">
-        <div class="w-full h-full flex flex-col">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between p-4 bg-black bg-opacity-50">
-                <button id="close-modal" class="text-white text-2xl">×</button>
-                <div class="flex gap-4">
-                    <button id="favorite-btn" class="heart-btn text-2xl">🤍</button>
-                    <button id="share-btn" class="text-white text-2xl">📤</button>
-                    <button id="download-btn" class="text-white text-2xl">⬇️</button>
-                </div>
-            </div>
-
-            <!-- Modal Image -->
-            <div class="flex-1 flex items-center justify-center p-4">
-                <div id="modal-image" class="max-w-full max-h-full"></div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="p-4 bg-black bg-opacity-50 text-white">
-                <h3 id="modal-title" class="font-semibold text-lg mb-1"></h3>
-                <p id="modal-description" class="text-gray-300 text-sm mb-2"></p>
-                <p id="modal-date" class="text-gray-400 text-xs"></p>
-            </div>
-        </div>
+        
     </div>
+
+    <!-- TikTok Style Viewer Container -->
+    <div id="tiktok-viewer-container" style="z-index: 1000;" class="fixed inset-0 z-50 hidden"></div>
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
@@ -293,26 +275,7 @@
             }
         }
 
-        // Modal controls
-        document.getElementById('close-modal').addEventListener('click', () => {
-            document.getElementById('image-modal').classList.remove('active');
-        });
-
-        document.getElementById('share-btn').addEventListener('click', () => {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Chia sẻ ảnh',
-                    text: 'Xem ảnh đẹp này!',
-                    url: window.location.href
-                });
-            } else {
-                alert('Tính năng chia sẻ không được hỗ trợ trên trình duyệt này');
-            }
-        });
-
-        document.getElementById('download-btn').addEventListener('click', () => {
-            alert('Tính năng tải ảnh sẽ được cập nhật trong phiên bản tiếp theo');
-        });
+        
 
         // Search and Settings overlays
         document.getElementById('close-search').addEventListener('click', () => {
@@ -357,7 +320,27 @@
             $(this).addClass('selected');
             gitMain.loadCategory(category)
         })
+
+        // Listen to TikTok viewer events
+        document.addEventListener('favoriteToggled', (e) => {
+            console.log('Favorite toggled in TikTok viewer:', e.detail);
+            // Here you can sync with your main favorites system
+        });
+
+        document.addEventListener('viewerClosed', (e) => {
+            console.log('TikTok viewer closed at index:', e.detail.currentIndex);
+            const container = document.getElementById('tiktok-viewer-container');
+            container.classList.add('hidden');
+            document.body.classList.remove('viewer-open');
+        });
          
+
+        $('body').on('click', '.image-item', function(){
+            const imageUrl = $(this).attr('data-url')
+            gitMain.modelObj.focus(imageUrl);
+            gitMain.modelObj.show();
+        })
+
     </script>
 </body>
 

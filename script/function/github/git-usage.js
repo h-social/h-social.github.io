@@ -1,5 +1,7 @@
 import { FirebaseQuery } from "/script/function/firebase/firebase-query.js";
 import { GithubAPI } from "/script/function/github/git-api.js";
+import { Model } from "/components/model/model.js";
+
 import { CONFIG } from "/config.js";
 import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs'
 
@@ -34,7 +36,7 @@ export class GitMain {
 
     displayCategory() {
         $('#category-list').empty();
-        let html = `<div class="swiper-slide ${this.selectedCategory === 'all' ? 'selected' : ''}" data-category="all">Tất cả</div>`;
+        let html = `<div class="swiper-slide cate-swiper ${this.selectedCategory === 'all' ? 'selected' : ''}" data-category="all">Tất cả</div>`;
         this.category.forEach(x => {
             html += `
             <div class="swiper-slide ${this.selectedCategory === x.name ? 'selected' : ''}" data-category="${x.name}" data-id="1">
@@ -87,12 +89,33 @@ export class GitMain {
 
         modal.classList.add('active');
     }
+
+    genDatas(imagesToShow){
+        let dataResult = [];
+        for(let i=0; i< imagesToShow.length; i++){
+            const urlImage = imagesToShow[i].html_url.replace('/blob/', '/refs/heads/').replace('https://github.com/', 'https://raw.githubusercontent.com/')
+            const previewImage = `https://images.weserv.nl/?url=${urlImage.replace('https://', '')}&w=400`
+            let image = {
+                name:   imagesToShow[i].name,
+                imagePath:  imagesToShow[i].html_url,
+                favorite:   false,
+            }
+            dataResult.push(image);
+        }
+        return dataResult;
+    }
+
     displayImages() {
          
         const startIndex = 0;
         const endIndex = this.currentPage * CONFIG.GALLERY_PAGE_SIZE;
         const imagesInCategory = this.images.filter(x => x.folder === this.selectedCategory || this.selectedCategory === "all");
         const imagesToShow = imagesInCategory.slice(startIndex, endIndex);
+        console.log(imagesToShow);
+        debugger;
+        const dataModel = this.genDatas(imagesInCategory)
+        this.modelObj = new Model(dataModel);
+
         const thisComponent = this;
         if (imagesToShow.length === 0) {
             document.querySelector('#image-grid').innerHTML = `
@@ -108,13 +131,6 @@ export class GitMain {
                 htmlImageGrid += `<button class="more-btn">More</button>`;
             }
             document.querySelector('#image-grid').innerHTML = htmlImageGrid;
-            document.querySelectorAll('.image-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const imageName = $(this).attr('data-name')
-                    const image = imagesToShow.find(x=>x.name == imageName);
-                    thisComponent.openModal(image);
-                });
-            });
         }
     }
 
