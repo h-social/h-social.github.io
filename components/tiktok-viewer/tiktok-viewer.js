@@ -6,6 +6,7 @@ export class TikTokViewer {
         this.containerId = containerId;
         this.data = data;
         this.currentIndex = 0;
+        this.loadedUntilIndex = 9;
         this.swiper = null;
         this.options = {
             startImagePath: null,
@@ -33,14 +34,18 @@ export class TikTokViewer {
     }
 
     render() {
+        const slidesHTML = this.data.slice(0, 10)
+            .map((item, index) => this.renderSlide(item, index))
+            .join('');
+    
         return `
             <div class="tiktok-viewer-container w-full h-screen bg-black">
                 <div class="swiper tiktok-swiper h-full">
                     <div class="swiper-wrapper">
-                        ${this.data.map((item, index) => this.renderSlide(item, index)).join('')}
+                        ${slidesHTML}
                     </div>
                 </div>
-                
+    
                 <!-- Navigation Controls -->
                 <div class="absolute top-4 left-4 z-10">
                     <button id="close-viewer" class="text-white text-2xl bg-black bg-opacity-50 rounded-full w-10 h-10 flex items-center justify-center">
@@ -158,6 +163,20 @@ export class TikTokViewer {
 
     onSlideChange() {
         this.currentIndex = this.swiper.activeIndex;
+        // Nếu đang gần cuối vùng đã load, append thêm slide
+        if (this.currentIndex + 2 >= this.loadedUntilIndex && this.loadedUntilIndex < this.data.length - 1) {
+            const nextIndex = this.loadedUntilIndex + 1;
+            const maxLoad = Math.min(nextIndex + 5, this.data.length);
+            for (let i = nextIndex; i < maxLoad; i++) {
+                const slideHTML = this.renderSlide(this.data[i], i);
+                const slideEl = document.createElement('div');
+                slideEl.classList.add('swiper-slide');
+                slideEl.innerHTML = slideHTML;
+                this.swiper.appendSlide(slideEl.outerHTML);
+            }
+            this.loadedUntilIndex = maxLoad - 1;
+        }
+
         this.preloadNextImages();
     }
 
