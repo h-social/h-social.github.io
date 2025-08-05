@@ -96,7 +96,6 @@ export class TikTokViewer {
 
     initSwiper() {
         this.swiper = new Swiper('.tiktok-swiper', {
-            direction: 'vertical',
             slidesPerView: 1,
             spaceBetween: 0,
             // mousewheel: true,
