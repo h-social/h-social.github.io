@@ -47,22 +47,13 @@ export class TikTokViewer {
                         ×
                     </button>
                 </div>
-                
-                <!-- Progress Indicator -->
-                <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-                    <div class="flex space-x-1">
-                        ${this.data.map((_, index) => `
-                            <div class="progress-dot w-2 h-2 rounded-full bg-white bg-opacity-30 transition-all duration-300 ${index === 0 ? 'bg-opacity-100' : ''}" data-index="${index}"></div>
-                        `).join('')}
-                    </div>
-                </div>
             </div>
         `;
     }
 
     renderSlide(item, index) {
         const urlImage = item.imagePath.replace('/blob/', '/refs/heads/').replace('https://github.com/', 'https://raw.githubusercontent.com/')
-        const previewImage = `https://images.weserv.nl/?url=${urlImage.replace('https://', '')}&w=400`
+        const previewImage = `https://images.weserv.nl/?url=${urlImage.replace('https://', '')}&w=800`
         return `
             <div class="swiper-slide model relative h-full">
                 <div class="w-full h-full flex items-center justify-center">
@@ -108,7 +99,7 @@ export class TikTokViewer {
             direction: 'vertical',
             slidesPerView: 1,
             spaceBetween: 0,
-            mousewheel: true,
+            // mousewheel: true,
             keyboard: {
                 enabled: true,
                 onlyInViewport: true,
@@ -186,6 +177,8 @@ export class TikTokViewer {
     handleStartImage() {
         // Nếu có startImagePath, tìm index của ảnh đó và chuyển đến
         if (this.options.startImagePath && this.data.length > 0) {
+            const urlImage = this.options.startImagePath.replace('/blob/', '/refs/heads/').replace('https://github.com/', 'https://raw.githubusercontent.com/')
+
             const startIndex = this.data.findIndex(item => item.imagePath === this.options.startImagePath);
             if (startIndex !== -1) {
                 this.currentIndex = startIndex;
@@ -275,7 +268,7 @@ export class TikTokViewer {
         
         // Create a temporary link to download the image
         const link = document.createElement('a');
-        link.href = currentItem.imagePath;
+        link.href = currentItem.imageDownload;
         link.download = currentItem.name || 'image.jpg';
         document.body.appendChild(link);
         link.click();

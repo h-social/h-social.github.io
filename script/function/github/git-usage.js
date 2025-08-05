@@ -39,7 +39,7 @@ export class GitMain {
         let html = `<div class="swiper-slide cate-swiper ${this.selectedCategory === 'all' ? 'selected' : ''}" data-category="all">Tất cả</div>`;
         this.category.forEach(x => {
             html += `
-            <div class="swiper-slide ${this.selectedCategory === x.name ? 'selected' : ''}" data-category="${x.name}" data-id="1">
+            <div class="swiper-slide cate-swiper ${this.selectedCategory === x.name ? 'selected' : ''}" data-category="${x.name}" data-id="1">
                 ${x.name}
             </div>`;
         });
@@ -98,6 +98,7 @@ export class GitMain {
             let image = {
                 name:   imagesToShow[i].name,
                 imagePath:  imagesToShow[i].html_url,
+                imageDownload: imagesToShow[i].download_url,
                 favorite:   false,
             }
             dataResult.push(image);
@@ -112,7 +113,6 @@ export class GitMain {
         const imagesInCategory = this.images.filter(x => x.folder === this.selectedCategory || this.selectedCategory === "all");
         const imagesToShow = imagesInCategory.slice(startIndex, endIndex);
         console.log(imagesToShow);
-        debugger;
         const dataModel = this.genDatas(imagesInCategory)
         this.modelObj = new Model(dataModel);
 
@@ -135,11 +135,12 @@ export class GitMain {
     }
 
     createImageCard(image) {
+        console.log(image);
         const isFavorite = (window.favoritesManager && window.favoritesManager.isFavorite(image.url)) || false;
         const urlImage = image.html_url.replace('/blob/', '/refs/heads/').replace('https://github.com/', 'https://raw.githubusercontent.com/')
         const previewImage = `https://images.weserv.nl/?url=${urlImage.replace('https://', '')}&w=400`
         return `
-            <div class="image-item" data-category="food" data-id="6" data-url="${image.url}" data-name="${image.name}">
+            <div class="image-item" data-category="food" data-id="6" data-url="${image.html_url}" data-download="${image.download_url}"  data-name="${image.name}">
                 <img src="${previewImage}" alt="${image.name}" loading="lazy" class="w-full h-full">
             </div>
         `;
