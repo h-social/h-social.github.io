@@ -222,6 +222,7 @@ export class GithubAPI {
     async deleteFile(filePath) {
         try {
             // First get the file to get its SHA
+            filePath = filePath.replace(`https://github.com/${this.owner}/${this.repository}/blob/main/`,'') 
             const getResponse = await fetch(`${CONFIG.GITHUB_API_BASE}/repos/${this.owner}/${this.repository}/contents/${filePath}`, {
                 headers: {
                     'Authorization': `token ${this.token}`,

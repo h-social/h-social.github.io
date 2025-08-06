@@ -310,11 +310,11 @@
         import { GitMain } from "/script/function/github/git-usage.js";
         const gitMain = await GitMain.create(app);
         gitMain.render();
-
+        window.gitMain = gitMain;
         $('body').on('click', '.more-btn', function(){
             gitMain.loadMoreImages()
         })
-        $('body').on('click', '.swiper-slide', function(){
+        $('body').on('click', '.swiper-slide.cate-swiper', function(){
             const category = $(this).attr('data-category')
             $('.swiper-slide.selected').removeClass('selected');
             $(this).addClass('selected');

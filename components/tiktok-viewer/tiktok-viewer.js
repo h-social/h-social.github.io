@@ -86,6 +86,9 @@ export class TikTokViewer {
                             <button href="${item.imageDownload}" class="download-btn text-white text-2xl transition-transform hover:scale-110">
                                 ⬇️
                             </button>
+                            <button class="delete-btn text-red-500 text-2xl transition-transform hover:scale-110" data-imageDownload="${item.imageDownload}">
+                                🗑️
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -148,6 +151,20 @@ export class TikTokViewer {
                 this.downloadCurrentImage();
             }
         });
+
+        $('.delete-btn').on('click', function(){
+            const dataImageDownload = $(this).attr('data-imageDownload');
+            const index = this.data.findIndex(item => item.imageDownload === dataImageDownload);
+            this.deleteCurrentImage(index);
+        })
+
+        // // Delete button
+        // document.addEventListener('click', (e) => {
+        //     if (e.target.classList.contains('')) {
+        //         const index = parseInt(e.target.dataset.index);
+        //         this.deleteCurrentImage(index);
+        //     }
+        // });
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -245,16 +262,16 @@ export class TikTokViewer {
 
     shareCurrentImage() {
         const currentItem = this.data[this.currentIndex];
-        
+        debugger
         if (navigator.share) {
             navigator.share({
                 title: currentItem.name,
                 text: `Xem ảnh: ${currentItem.name}`,
-                url: window.location.href
+                url: currentItem.imagePath
             });
         } else {
             // Fallback for browsers that don't support Web Share API
-            const url = window.location.href;
+            const url = currentItem.imagePath;
             navigator.clipboard.writeText(url).then(() => {
                 alert('Đã sao chép link vào clipboard!');
             });
@@ -271,6 +288,57 @@ export class TikTokViewer {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+    async deleteCurrentImage(index) {
+        const currentItem = this.data[index || this.currentIndex];
+        
+        // Show confirmation popup
+        const confirmed = confirm(`Bạn có chắc chắn muốn xóa ảnh "${currentItem.name}"?`);
+        
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            
+            // Delete file from GitHub
+            const result = await gitMain.api.deleteFile(currentItem.imagePath);
+            
+            if (result.success) {
+                // Remove item from data array
+                this.data.splice(index || this.currentIndex, 1);
+                
+                // Update swiper
+                if (this.swiper) {
+                    this.swiper.removeSlide(index || this.currentIndex);
+                    
+                    // If we deleted the last slide, go to previous slide
+                    if (this.currentIndex >= this.data.length) {
+                        this.currentIndex = Math.max(0, this.data.length - 1);
+                        this.swiper.slideTo(this.currentIndex);
+                    }
+                }
+                
+                alert('Đã xóa ảnh thành công!');
+                
+                // Trigger custom event for parent components
+                const event = new CustomEvent('imageDeleted', {
+                    detail: {
+                        index: index || this.currentIndex,
+                        item: currentItem
+                    }
+                });
+                document.dispatchEvent(event);
+                
+            } else {
+                alert('Có lỗi xảy ra khi xóa ảnh. Vui lòng thử lại.');
+            }
+            
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            alert('Có lỗi xảy ra khi xóa ảnh: ' + error.message);
+        }
     }
 
     goToSlide(index) {
