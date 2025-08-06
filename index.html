@@ -341,6 +341,40 @@
             gitMain.modelObj.show();
         })
 
+
+        import { getMessaging , getToken, onMessage } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging.js';
+        import { firebaseConfig } from '/config.js';
+
+        const fcmMessaging = getMessaging(app);
+
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then(function(registration) {
+              console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(function(err) {
+              console.log('Service Worker registration failed:', err);
+            });
+        }
+
+        // Xin quyền nhận notification
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            // Thay YOUR_VAPID_KEY_HERE bằng VAPID key lấy từ Firebase Console
+            getToken(fcmMessaging, { vapidKey: 'YOUR_VAPID_KEY_HERE' })
+              .then((currentToken) => {
+                if (currentToken) {
+                  console.log('FCM Token:', currentToken);
+                  // Gửi token này lên server nếu cần
+                } else {
+                  console.log('No registration token available. Request permission to generate one.');
+                }
+              })
+              .catch((err) => {
+                console.log('An error occurred while retrieving token. ', err);
+              });
+          }
+        });
+
     </script>
 </body>
 
