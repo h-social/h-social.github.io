@@ -222,8 +222,8 @@ export class GithubAPI {
         return{
             'Authorization': `Bearer ${this.token}`,
             'Accept': 'application/vnd.github+json',
-            'Content-Type': 'application/json',
-            'X-GitHub-Api-Version': '2022-11-28'
+            'X-GitHub-Api-Version': '2022-11-28',
+            "Content-Type": "application/json" 
         }
     }
     // Delete file from GitHub
@@ -236,38 +236,24 @@ export class GithubAPI {
             });
 
             if (!getResponse.ok) {
+               
                 throw new Error(`File not found: ${filePath}`);
             }
 
             const fileInfo = await getResponse.json();
-            debugger;
-
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-            myHeaders.append("Authorization", `Bearer ${this.token}`);
             
-            const raw = JSON.stringify({
-              "message": "my bot commit",
-              "committer": {
-                "name": "Bot",
-                "email": "hposvinhhien"
-              },
-              "sha": fileInfo.sha
+            // Delete the file
+            const deleteResponse = await fetch(`${CONFIG.GITHUB_API_BASE}/repos/${this.owner}/${this.repository}/contents/${filePath}`, {
+                method: 'DELETE',
+                headers: this.getHeader(),
+                body: JSON.stringify(
+                    {message:`Delete: ${filePath}`,committer:{name:"Bot",email:"bot@example.com"}, sha: fileInfo.sha}
+                )
             });
-            
-            const requestOptions = {
-              method: "DELETE",
-              headers: myHeaders,
-              body: raw,
-              redirect: "follow"
-            };
-            
-            const deleteResponse = await fetch(`${CONFIG.GITHUB_API_BASE}/repos/${this.owner}/${this.repository}/contents/${filePath}`, requestOptions)
-              .then((response) => response.text())
-              .then((result) => console.log(result))
-              .catch((error) => console.error(error));
 
             if (!deleteResponse.ok) {
+                const err = await deleteResponse.json();
+                console.error("GitHub DELETE error:", err);
                 throw new Error(`Failed to delete file: ${filePath}`);
             }
 
