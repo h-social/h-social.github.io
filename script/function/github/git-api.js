@@ -218,16 +218,21 @@ export class GithubAPI {
         }
     }
 
+    getHeader(){
+        return{
+            'Authorization': `Bearer ${this.token}`,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json',
+            'X-GitHub-Api-Version': '2022-11-28'
+        }
+    }
     // Delete file from GitHub
     async deleteFile(filePath) {
         try {
             // First get the file to get its SHA
             filePath = filePath.replace(`https://github.com/${this.owner}/${this.repository}/blob/main/`,'') 
             const getResponse = await fetch(`${CONFIG.GITHUB_API_BASE}/repos/${this.owner}/${this.repository}/contents/${filePath}`, {
-                headers: {
-                    'Authorization': `token ${this.token}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
+                headers: this.getHeader()
             });
 
             if (!getResponse.ok) {
@@ -235,20 +240,32 @@ export class GithubAPI {
             }
 
             const fileInfo = await getResponse.json();
+            debugger;
+
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Authorization", `Bearer ${this.token}`);
             
-            // Delete the file
-            const deleteResponse = await fetch(`${CONFIG.GITHUB_API_BASE}/repos/${this.owner}/${this.repository}/contents/${filePath}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `token ${this.token}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `Delete: ${filePath}`,
-                    sha: fileInfo.sha
-                })
+            const raw = JSON.stringify({
+              "message": "my bot commit",
+              "committer": {
+                "name": "Bot",
+                "email": "hposvinhhien"
+              },
+              "sha": fileInfo.sha
             });
+            
+            const requestOptions = {
+              method: "DELETE",
+              headers: myHeaders,
+              body: raw,
+              redirect: "follow"
+            };
+            
+            const deleteResponse = await fetch(`${CONFIG.GITHUB_API_BASE}/repos/${this.owner}/${this.repository}/contents/${filePath}`, requestOptions)
+              .then((response) => response.text())
+              .then((result) => console.log(result))
+              .catch((error) => console.error(error));
 
             if (!deleteResponse.ok) {
                 throw new Error(`Failed to delete file: ${filePath}`);

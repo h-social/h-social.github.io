@@ -58,12 +58,12 @@ export class TikTokViewer {
 
     renderSlide(item, index) {
         const urlImage = item.imagePath.replace('/blob/', '/refs/heads/').replace('https://github.com/', 'https://raw.githubusercontent.com/')
-        const previewImage = `https://images.weserv.nl/?url=${urlImage.replace('https://', '')}&w=400`
+        const previewImage = `https://images.weserv.nl/?url=${urlImage.replace('https://', '')}&w=800`
         return `
             <div class="swiper-slide model relative h-full">
                 <div class="w-full h-full flex items-center justify-center">
                     <img 
-                        src="${urlImage}" 
+                        src="${previewImage}" 
                         alt="${item.name}"
                         class="w-full h-full object-cover"
                         loading="${index < 5 ? 'eager' : 'lazy'}"
@@ -100,7 +100,8 @@ export class TikTokViewer {
         this.swiper = new Swiper('.tiktok-swiper', {
             slidesPerView: 1,
             spaceBetween: 0,
-            // mousewheel: true,
+            direction: "vertical",
+            mousewheel: true,
             keyboard: {
                 enabled: true,
                 onlyInViewport: true,
@@ -125,6 +126,8 @@ export class TikTokViewer {
     }
 
     bindEvents() {
+
+        const thisClass= this;
         // Close button
         document.getElementById('close-viewer')?.addEventListener('click', () => {
             this.close();
@@ -154,8 +157,8 @@ export class TikTokViewer {
 
         $('.delete-btn').on('click', function(){
             const dataImageDownload = $(this).attr('data-imageDownload');
-            const index = this.data.findIndex(item => item.imageDownload === dataImageDownload);
-            this.deleteCurrentImage(index);
+            const index = thisClass.data.findIndex(item => item.imageDownload === dataImageDownload);
+            thisClass.deleteCurrentImage(index);
         })
 
         // // Delete button
