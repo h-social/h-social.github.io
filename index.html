@@ -320,7 +320,11 @@
             $(this).addClass('selected');
             gitMain.loadCategory(category)
         })
-
+        $('body').on('click', '.delete-btn', function(){
+            const dataImageDownload = $(this).attr('data-imageDownload');
+            const index = gitMain.modelObj.tiktokViewer.data.findIndex(item => item.imageDownload === dataImageDownload);
+            gitMain.modelObj.tiktokViewer.deleteCurrentImage(index);
+        })
         // Listen to TikTok viewer events
         document.addEventListener('favoriteToggled', (e) => {
             console.log('Favorite toggled in TikTok viewer:', e.detail);

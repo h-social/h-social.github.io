@@ -157,11 +157,6 @@ export class TikTokViewer {
             }
         });
 
-        $('.delete-btn').on('click', function(){
-            const dataImageDownload = $(this).attr('data-imageDownload');
-            const index = thisClass.data.findIndex(item => item.imageDownload === dataImageDownload);
-            thisClass.deleteCurrentImage(index);
-        })
 
         // // Delete button
         // document.addEventListener('click', (e) => {
