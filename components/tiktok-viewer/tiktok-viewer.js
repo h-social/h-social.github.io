@@ -9,6 +9,7 @@ export class TikTokViewer {
         this.loadedUntilIndex = 9;
         this.jumpIndex = 0;
         this.swiper = null;
+        this.currentSwiper = [];
         this.options = {
             startImagePath: null,
             ...options
@@ -43,7 +44,7 @@ export class TikTokViewer {
             <div class="tiktok-viewer-container w-full h-screen bg-black">
                 <div class="swiper tiktok-swiper h-full">
                     <div class="swiper-wrapper">
-                        ${slidesHTML}
+                       
                     </div>
                 </div>
     
@@ -66,7 +67,7 @@ export class TikTokViewer {
                     <img 
                         src="${previewImage}" 
                         alt="${item.name}"
-                        class="w-full h-full object-cover"
+                        class="w-full h-full object-contain"
                         loading="${index < 5 ? 'eager' : 'lazy'}"
                         onload="this.style.opacity='1'"
                         style="opacity: 0; transition: opacity 0.3s ease;"
@@ -187,7 +188,10 @@ export class TikTokViewer {
         this.preloadNextImages();
     }
     onSlideChange() {
-        this.currentIndex = this.swiper.activeIndex;
+        if(this.swiper.activeIndex != 0){
+            this.currentIndex = this.swiper.activeIndex;
+        }
+       
         // Nếu đang gần cuối vùng đã load, append thêm slide
         if (this.currentIndex + 2 >= this.loadedUntilIndex && this.loadedUntilIndex < this.data.length - 1) {
             const nextIndex = this.loadedUntilIndex + 1;
@@ -202,6 +206,7 @@ export class TikTokViewer {
                 // Xóa slide từ đầu (slide cũ nhất)
                 for (let i = 0; i < slidesToRemove; i++) {
                     this.swiper.removeSlide(0);
+                    this.currentSwiper.splice(0,1);
                 }
                 // Điều chỉnh currentIndex sau khi xóa slide
                 this.currentIndex = Math.max(0, this.currentIndex - slidesToRemove);
@@ -214,6 +219,7 @@ export class TikTokViewer {
                 slideEl.classList.add('swiper-slide');
                 slideEl.innerHTML = slideHTML;
                 this.swiper.appendSlide(slideEl.outerHTML);
+                this.currentSwiper.push(this.data[i]);
             }
             this.loadedUntilIndex = maxLoad - 1;
         }
@@ -222,18 +228,17 @@ export class TikTokViewer {
     }
 
     handleStartImage() {
-        debugger;
         // Nếu có startImagePath, tìm index của ảnh đó và chuyển đến
         if (this.options.startImagePath && this.data.length > 0) {
             const urlImage = this.options.startImagePath.replace('/blob/', '/refs/heads/').replace('https://github.com/', 'https://raw.githubusercontent.com/')
-
-            const startIndex = this.data.findIndex(item => item.imagePath === this.options.startImagePath);
-            if (startIndex !== -1) {
-                this.loadedUntilIndex = startIndex - 5;
+            const startIndex = this.data.findIndex(item => item.imagePath === this.options.startImagePath) - 1;
+            if (startIndex !== -2) {
+                this.loadedUntilIndex = startIndex;
                 this.currentIndex = startIndex;
                 this.onSlideChange();
                 if (this.swiper) {
-                    this.swiper.slideTo(startIndex);
+                    const checkSlideIndex = this.currentSwiper.findIndex(item => item.imagePath === this.options.startImagePath);
+                    this.swiper.slideTo(checkSlideIndex);
                 }
             }
         }
