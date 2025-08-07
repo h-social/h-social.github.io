@@ -17,7 +17,7 @@ export const CONFIG = {
   
   // File limits
   MAX_FILES_PER_UPLOAD: 50,
-  GALLERY_PAGE_SIZE: 20,
+  GALLERY_PAGE_SIZE: 60,
   
   // API endpoints
   GITHUB_API_BASE: 'https://api.github.com',

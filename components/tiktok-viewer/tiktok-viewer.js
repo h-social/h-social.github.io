@@ -7,6 +7,7 @@ export class TikTokViewer {
         this.data = data;
         this.currentIndex = 0;
         this.loadedUntilIndex = 9;
+        this.jumpIndex = 0;
         this.swiper = null;
         this.options = {
             startImagePath: null,
@@ -181,12 +182,32 @@ export class TikTokViewer {
         });
     }
 
+
+    onInit() {
+        this.preloadNextImages();
+    }
     onSlideChange() {
         this.currentIndex = this.swiper.activeIndex;
         // Nếu đang gần cuối vùng đã load, append thêm slide
         if (this.currentIndex + 2 >= this.loadedUntilIndex && this.loadedUntilIndex < this.data.length - 1) {
             const nextIndex = this.loadedUntilIndex + 1;
             const maxLoad = Math.min(nextIndex + 5, this.data.length);
+            
+            // Xóa slide cũ nếu có quá nhiều slide (giữ lại 10 slide gần nhất)
+            const currentSlides = this.swiper.slides.length;
+            const maxSlidesToKeep = 10;
+            
+            if (currentSlides > maxSlidesToKeep) {
+                const slidesToRemove = currentSlides - maxSlidesToKeep;
+                // Xóa slide từ đầu (slide cũ nhất)
+                for (let i = 0; i < slidesToRemove; i++) {
+                    this.swiper.removeSlide(0);
+                }
+                // Điều chỉnh currentIndex sau khi xóa slide
+                this.currentIndex = Math.max(0, this.currentIndex - slidesToRemove);
+            }
+            
+            // Append slide mới
             for (let i = nextIndex; i < maxLoad; i++) {
                 const slideHTML = this.renderSlide(this.data[i], i);
                 const slideEl = document.createElement('div');
@@ -200,18 +221,17 @@ export class TikTokViewer {
         this.preloadNextImages();
     }
 
-    onInit() {
-        this.preloadNextImages();
-    }
-
     handleStartImage() {
+        debugger;
         // Nếu có startImagePath, tìm index của ảnh đó và chuyển đến
         if (this.options.startImagePath && this.data.length > 0) {
             const urlImage = this.options.startImagePath.replace('/blob/', '/refs/heads/').replace('https://github.com/', 'https://raw.githubusercontent.com/')
 
             const startIndex = this.data.findIndex(item => item.imagePath === this.options.startImagePath);
             if (startIndex !== -1) {
+                this.loadedUntilIndex = startIndex - 5;
                 this.currentIndex = startIndex;
+                this.onSlideChange();
                 if (this.swiper) {
                     this.swiper.slideTo(startIndex);
                 }
