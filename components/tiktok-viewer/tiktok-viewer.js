@@ -88,7 +88,7 @@ export class TikTokViewer {
                             <button href="${item.imageDownload}" class="download-btn text-white text-2xl transition-transform hover:scale-110">
                                 <i class="fa-solid fa-download"></i>
                             </button>
-                            <button class="delete-btn text-2xl transition-transform hover:scale-110" data-imageDownload="${item.imageDownload}">
+                            <button class="delete-btn text-white text-2xl transition-transform hover:scale-110" data-imageDownload="${item.imageDownload}">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -186,10 +186,10 @@ export class TikTokViewer {
         if(this.swiper.activeIndex != 0){
             this.currentIndex = this.swiper.activeIndex;
         }
-       
+        const nextIndex = this.imageIndex + 1;
+
         // Nếu đang gần cuối vùng đã load, append thêm slide
         if (this.currentIndex + 2 >= this.loadedUntilIndex && this.loadedUntilIndex < this.data.length - 1) {
-            const nextIndex = this.loadedUntilIndex + 1;
             const maxLoad = Math.min(nextIndex + 5, this.data.length);
             
             // Xóa slide cũ nếu có quá nhiều slide (giữ lại 10 slide gần nhất)
@@ -219,6 +219,10 @@ export class TikTokViewer {
             this.loadedUntilIndex = maxLoad - 1;
         }
 
+        this.imageIndex++;
+        const curentImage = this.data[this.imageIndex];
+        InstaneEvent.setImage(curentImage)
+
         this.preloadNextImages();
     }
 
@@ -227,6 +231,7 @@ export class TikTokViewer {
         if (this.options.startImagePath && this.data.length > 0) {
             const urlImage = this.options.startImagePath.replace('/blob/', '/refs/heads/').replace('https://github.com/', 'https://raw.githubusercontent.com/')
             const startIndex = this.data.findIndex(item => item.imagePath === this.options.startImagePath) - 1;
+            this.imageIndex = startIndex;
             if (startIndex !== -2) {
                 this.loadedUntilIndex = startIndex;
                 this.currentIndex = startIndex;

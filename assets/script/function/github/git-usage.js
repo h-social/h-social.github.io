@@ -20,7 +20,28 @@ export class GitMain {
 
     async init() {
         this.query = await FirebaseQuery.create(this.app);
-        const token = await this.query.get("SettingToken", "github")
+        
+        // Thử lấy token từ localStorage trước
+        let token = localStorage.getItem('github_token');
+        
+        // Nếu không có trong localStorage, lấy từ Firebase
+        if (!token) {
+            token = await this.query.get("SettingToken", "github");
+            // Lưu vào localStorage để lần sau dùng
+            if (token) {
+                localStorage.setItem('github_token', token);
+            }
+        } else {
+            // Nếu có trong localStorage, vẫn lấy từ Firebase để cập nhật (chạy song song)
+            this.query.get("SettingToken", "github").then(firebaseToken => {
+                if (firebaseToken && firebaseToken !== token) {
+                    localStorage.setItem('github_token', firebaseToken);
+                }
+            }).catch(err => {
+                console.log('Failed to sync token from Firebase:', err);
+            });
+        }
+        
         this.api = await GithubAPI.create(token);
     }
 

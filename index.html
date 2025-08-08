@@ -128,8 +128,10 @@
         const userInfo = document.getElementById('user-info');
         const logoutBtn = document.getElementById('logout-btn');
 
-        import { main } from "/main.js";
+        import { mainEvent } from "/assets/script/main-event.js";
 
+        const mainEventObj = new mainEvent();
+        import { main } from "/main.js";
         const mainObj = new main();
 
         // Check authentication state
@@ -164,16 +166,6 @@
                 console.error('Error signing out:', error);
             }
         });
-
-        // Sample image data
-        const imageData = {
-            1: { title: "Phong cảnh núi non", description: "Cảnh đẹp thiên nhiên hùng vĩ", date: "2 giờ trước", category: "nature" },
-            2: { title: "Bánh pizza ngon", description: "Pizza Ý truyền thống", date: "5 giờ trước", category: "food" },
-            3: { title: "Chân dung nghệ thuật", description: "Phong cách tối giản", date: "1 ngày trước", category: "people" },
-            4: { title: "Nghệ thuật trừu tượng", description: "Sắc màu và hình khối", date: "2 ngày trước", category: "abstract" },
-            5: { title: "Biển xanh", description: "Sóng biển êm đềm", date: "3 ngày trước", category: "nature" },
-            6: { title: "Trái cây tươi", description: "Táo đỏ tươi ngon", date: "1 tuần trước", category: "food" }
-        };
 
 
 
@@ -279,11 +271,11 @@
         
 
         // Search and Settings overlays
-        document.getElementById('close-search').addEventListener('click', () => {
-            switchView('gallery');
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            document.querySelector('[data-view="gallery"]').classList.add('active');
-        });
+        // document.getElementById('close-search').addEventListener('click', () => {
+        //     switchView('gallery');
+        //     document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        //     document.querySelector('[data-view="gallery"]').classList.add('active');
+        // });
 
         // Grid layout change
         document.querySelectorAll('input[name="grid"]').forEach(radio => {
