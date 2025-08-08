@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Gallery - Settings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="/script/tailwindcss.js"></script>
-    <script src="/script/tailwind-usage.js"></script>
-    <link rel="stylesheet" href="/style/main.css"></link>
+    <script src="/assets/script/tailwindcss.js"></script>
+    <script src="/assets/script/tailwind-usage.js"></script>
+    <link rel="stylesheet" href="/assets/style/main.css"></link>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <!-- Header -->
@@ -207,8 +207,8 @@
     </div>
 
     <script type="module">
-        import { Firebase } from "/script/function/Firebase.js";
-        import { FirebaseQuery } from "/script/function/firebase/firebase-query.js";
+        import { Firebase } from "/assets/script/function/Firebase.js";
+        import { FirebaseQuery } from "/assets/script/function/firebase/firebase-query.js";
         const firebase = new Firebase();
         const app = firebase.getApp();
         const query = await FirebaseQuery.create(app);

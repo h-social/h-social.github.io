@@ -1,5 +1,5 @@
 import { CONFIG } from "/config.js";
-import { Utils } from "/script/function/general/Utils.js";
+import { Utils } from "/assets/script/function/general/Utils.js";
 
 export class GithubAPI {
     constructor(token) {

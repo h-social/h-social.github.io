@@ -1,5 +1,5 @@
-import { FirebaseQuery } from "/script/function/firebase/firebase-query.js";
-import { GithubAPI } from "/script/function/github/git-api.js";
+import { FirebaseQuery } from "/assets/script/function/firebase/firebase-query.js";
+import { GithubAPI } from "/assets/script/function/github/git-api.js";
 import { Model } from "/components/model/model.js";
 
 import { CONFIG } from "/config.js";

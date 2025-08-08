@@ -1,4 +1,4 @@
-import { app, auth, analytics } from "/script/function/firebase/firebase-object.js";
+import { app, auth, analytics } from "/assets/script/function/firebase/firebase-object.js";
 
 
   // Initialize Firebase

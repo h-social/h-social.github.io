@@ -80,16 +80,16 @@ export class TikTokViewer {
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
                             <button class="favorite-btn text-2xl transition-transform hover:scale-110 ${item.favorite ? 'text-red-500' : 'text-white'}" data-index="${index}">
-                                ${item.favorite ? '❤️' : '🤍'}
+                                ${item.favorite ? '<i class="fa-solid fa-heart text-red-500text-red-500"></i>' : '<i class="fa-regular fa-heart"></i>'}
                             </button>
                             <button class="share-btn text-white text-2xl transition-transform hover:scale-110">
-                                📤
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </button>
                             <button href="${item.imageDownload}" class="download-btn text-white text-2xl transition-transform hover:scale-110">
-                                ⬇️
+                                <i class="fa-solid fa-download"></i>
                             </button>
-                            <button class="delete-btn text-red-500 text-2xl transition-transform hover:scale-110" data-imageDownload="${item.imageDownload}">
-                                🗑️
+                            <button class="delete-btn text-2xl transition-transform hover:scale-110" data-imageDownload="${item.imageDownload}">
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
                     </div>

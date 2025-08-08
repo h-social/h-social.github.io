@@ -8,10 +8,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Gallery</title>
-    <script src="/script/tailwindcss.js"></script>
-    <script src="/script/tailwind-usage.js"></script>
-    <link rel="stylesheet" href="/style/main.css"></link>
-    <link rel="stylesheet" href="/style/tiktok-viewer.css"></link>
+    <script src="/assets/script/tailwindcss.js"></script>
+    <script src="/assets/script/tailwind-usage.js"></script>
+    <link rel="stylesheet" href="/assets/style/main.css"></link>
+    <link rel="stylesheet" href="/assets/style/tiktok-viewer.css"></link>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 </head>
 <style>
@@ -93,29 +93,30 @@
     <div class="bottom-nav">
         <div class="flex justify-around">
             <div class="nav-item active" data-view="gallery">
-                <div class="text-2xl mb-1">🖼</div>
+                <div class="text-2xl mb-1"><i class="fa-solid fa-images"></i></div>
                 <span class="text-xs">Gallery</span>
             </div>
             <div class="nav-item" data-view="favorites">
-                <div class="text-2xl mb-1">❤️</div>
+                <div class="text-2xl mb-1"><i class="fa-solid fa-heart"></i></div>
                 <span class="text-xs">Yêu thích</span>
             </div>
             <div class="nav-item" data-view="search">
-                <div class="text-2xl mb-1">🔍</div>
+                <div class="text-2xl mb-1"><i class="fa-solid fa-magnifying-glass"></i></div>
                 <span class="text-xs">Tìm kiếm</span>
             </div>
             <div class="nav-item" data-view="settings">
-                <div class="text-2xl mb-1">⚙️</div>
+                <div class="text-2xl mb-1"><i class="fa-solid fa-gear"></i></div>
                 <span class="text-xs">Cài đặt</span>
             </div>
         </div>
     </div>    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script src="/script/min.js"></script>
+    <script src="https://kit.fontawesome.com/f326bb0511.js" crossorigin="anonymous"></script>
+    <script src="/assets/script/min.js"></script>
 
     <!-- Firebase Authentication Check -->
     <script type="module">
-        import { Firebase } from "/script/function/Firebase.js";
+        import { Firebase } from "/assets/script/function/Firebase.js";
         import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
         const firebase = new Firebase();
@@ -307,7 +308,7 @@
             }
         });
 
-        import { GitMain } from "/script/function/github/git-usage.js";
+        import { GitMain } from "/assets/script/function/github/git-usage.js";
         const gitMain = await GitMain.create(app);
         gitMain.render();
         window.gitMain = gitMain;

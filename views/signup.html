@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Gallery - Sign Up</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="/script/tailwindcss.js"></script>
-    <script src="/script/tailwind-usage.js"></script>
+    <script src="/assets/script/tailwindcss.js"></script>
+    <script src="/assets/script/tailwind-usage.js"></script>
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
@@ -128,7 +128,7 @@
 
     <!-- Firebase SDK -->
     <script type="module">
-        import { app, auth, analytics } from "/script/function/firebase/firebase-object.js";
+        import { app, auth, analytics } from "/assets/script/function/firebase/firebase-object.js";
         import { getFirestore} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
         import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
