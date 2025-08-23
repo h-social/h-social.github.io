@@ -1,4 +1,4 @@
-import { getFirestore, collection, getDocs, query, orderBy, addDoc, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, orderBy, addDoc, serverTimestamp, where, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 
@@ -94,6 +94,38 @@ export class FirebaseQuery {
             
         } catch (error) {
             console.error("Error getting documents:", error);
+            throw error;
+        }
+    }
+    
+    delete = async(collectionName, name) => {
+        try {
+            // Tạo truy vấn với điều kiện name
+            const q = query(
+                collection(this.db, collectionName, this.user.uid, "tokens"), 
+                where("name", "==", name)
+            );
+    
+            // Lấy dữ liệu
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                console.log(`No documents found with name: ${name} in collection: ${collectionName}`);
+                return false;
+            }
+    
+            // Xóa tất cả documents có cùng name
+            const deletePromises = querySnapshot.docs.map(async (document) => {
+                await deleteDoc(doc(this.db, collectionName, this.user.uid, "tokens", document.id));
+                console.log(`Document deleted - ID: ${document.id}, Name: ${name}`);
+            });
+            
+            await Promise.all(deletePromises);
+            console.log(`Successfully deleted ${querySnapshot.docs.length} document(s) with name: ${name}`);
+            return true;
+            
+        } catch (error) {
+            console.error("Error deleting document:", error);
             throw error;
         }
     }

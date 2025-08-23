@@ -324,7 +324,7 @@
                     const tokenInput = this.closest('.bg-white').querySelector('input[type="password"], input[type="text"]');
                     const strValue = tokenInput.value.trim();
                     if (strValue) {
-                        debugger;
+                        await query.delete("SettingToken", "github")
                         await query.set("SettingToken", "github", strValue)
                         alert('Demo: Token saved successfully!');
                     } else {

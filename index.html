@@ -373,6 +373,27 @@
         });
 
     </script>
+
+    <script>
+        async function downloadImg(val) {
+            const $this = $(val)
+             const imageUrl = $this.attr('link'); // link ảnh (hoặc URL API)
+            const name = $this.attr('data-name') || 'my-image.jpg'; // Tên file khi tải về
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = name; 
+            document.body.appendChild(link);
+            link.click();
+
+            // cleanup
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
 </body>
 
 </html>

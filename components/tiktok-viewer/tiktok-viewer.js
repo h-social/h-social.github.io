@@ -85,7 +85,7 @@ export class TikTokViewer {
                             <button class="share-btn text-white text-2xl transition-transform hover:scale-110">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </button>
-                            <button href="${item.imageDownload}" class="download-btn text-white text-2xl transition-transform hover:scale-110">
+                            <button link="${item.imageDownload}" data-name="${item.name}" ontouchstart="downloadImg(this)" class="download-btn text-white text-2xl transition-transform hover:scale-110">
                                 <i class="fa-solid fa-download"></i>
                             </button>
                             <button class="delete-btn text-white text-2xl transition-transform hover:scale-110" data-imageDownload="${item.imageDownload}">
@@ -153,7 +153,7 @@ export class TikTokViewer {
         // Download button
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('download-btn')) {
-                this.downloadCurrentImage();
+                this.downloadCurrentImage(e);
             }
         });
 
@@ -306,16 +306,21 @@ export class TikTokViewer {
         }
     }
 
-    downloadCurrentImage() {
-        const currentItem = this.data[this.currentIndex];
-        
+    async downloadCurrentImage(e) {
+        debugger;
+        const currentItem = $(e.target);
+        const imageUrl = currentItem.attr('link');
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
         // Create a temporary link to download the image
         const link = document.createElement('a');
-        link.href = currentItem.imageDownload;
+        link.href = imageUrl;
         link.download = currentItem.name || 'image.jpg';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
     }
 
     async deleteCurrentImage(index) {
